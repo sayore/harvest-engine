@@ -1,16 +1,15 @@
 import { Socket } from "socket.io-client";
 import { BasePacket } from "./base";
 
-export class ChatPacket extends BasePacket {
+export class PlayerExternalJoinPacket extends BasePacket {
     constructor() {
         super();
         console.log("constructed chat packet");
     }
-    // Loading Chat messages, this will be received if the client sends a 05.
     handle(args:object | Array<string>) {
         if(Array.isArray(args)) {
             args.forEach((str)=>{
-                (<HTMLDivElement>document.querySelector('#chat')).innerText+=`${str}\n`;
+                document.querySelector('#chat').innerHTML+="???: "+ str+"<br>";
             })
         }
         console.log(args);

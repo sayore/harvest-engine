@@ -1,10 +1,10 @@
 import { Socket } from "socket.io-client";
-import { player } from "..";
 import { BasePacket } from "./base";
 
 export class ChatBroadcastPacket extends BasePacket{
+    // Will be received on every message send into chat!
     handle(args:{msg:string}) {
-        document.querySelector('#chat').innerHTML+=player.UniqueIdentifier+": "+ args.msg+"<br>";
+        (<HTMLDivElement>document.querySelector('#chat')).innerText+=`${args.msg}\n`; //???
     }
     send(socket: Socket,message:string) {
 

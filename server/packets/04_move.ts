@@ -1,11 +1,10 @@
-
-import { Socket } from "socket.io";
+import { Socket } from "socket.io-client";
 import { memoryStorage } from "../lib/redis";
 import { BasePacket } from "./base";
 
-export class RefreshPacket extends BasePacket{
+export class MovePacket extends BasePacket{
     handle(args:{msg:string}) {
-        memoryStorage.lrange("chat",-20,100,(err,res)=>{
+        memoryStorage.lrange("chat",-100,100,(err,res)=>{
             this.player.socket.emit("01",res);
         })
         
@@ -13,4 +12,4 @@ export class RefreshPacket extends BasePacket{
     send(socket: Socket,message:string) {
 
     }
-} 
+}

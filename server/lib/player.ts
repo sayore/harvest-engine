@@ -7,6 +7,11 @@ import { memoryStorage } from "./redis";
 
 export class Player {
     public packageRegistry: PacketRegistry;
+    public extra: any = {
+        name:["Alp","Bet","Gam","Ome","San"][Math.floor(Math.random()*5)]
+        +["Alp","Bet","Gam","Ome","San"][Math.floor(Math.random()*5)]
+        +["Alp","Bet","Gam","Ome","San"][Math.floor(Math.random()*5)]
+    };
 
     constructor(
         public socket: Socket
