@@ -1,0 +1,16 @@
+#chat-wrapper {
+    position:absolute;
+    bottom:0px;left:20px;
+    background-color:rgba(138, 94, 94, 0.349);
+    width:50vw;
+}
+
+#chat {
+
+}
+
+#sendText {
+    width:100%;
+    border:3px solid black;
+    border-radius:5px;
+}

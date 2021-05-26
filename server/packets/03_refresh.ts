@@ -1,13 +1,16 @@
 import { Socket } from "socket.io-client";
 import { eHTTPServer } from "../lib/httpserver";
+import { Player } from "../lib/player";
 import { memoryStorage } from "../lib/redis";
 import { BasePacket } from "./base";
 
-export class ChatPacket extends BasePacket{
+export class RefreshPacket extends BasePacket{
+    public player: Player;
     handle(args:{msg:string}) {
-        memoryStorage.rpush("chat",args.msg);
-        eHTTPServer.io.emit('01b',{msg:args.msg})
-
+        memoryStorage.lrange("chat",-100,100,(err,res)=>{
+            this.player.socket.emit("01",res);
+        })
+        
     }
     send(socket: Socket,message:string) {
 

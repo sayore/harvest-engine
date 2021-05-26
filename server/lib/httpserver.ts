@@ -1,9 +1,7 @@
 import * as express from "express";
 import path from "path";
-import { Socket, Server } from "socket.io";
-import { PacketRegistry } from "../../server/packets/packet_registry";
-import { RegisterPacket } from "../packets/00_register";
-import { ChatPacket } from "../packets/01_chat";
+import { Server } from "socket.io";
+import { Player } from "./player";
 
 const app = express();
 const http = require('http');
@@ -12,7 +10,8 @@ const io = new Server(server);
 
 export class eHTTPServer {
     static io: Server;
-    
+    static players: Player[] = [];
+
     static start() {
 
         app.get('/', (req, res) => {
@@ -25,17 +24,11 @@ export class eHTTPServer {
         io.on("connection", (socket) => {
             
             console.log(socket.handshake.query); // prints { x: "42", EIO: "4", transport: "polling" }
+            this.players.push(new Player(socket));
             socket.emit("00",{ok:200, uni: Math.floor(Math.random()*10000000)})
             socket.join('main');
             socket.emit("00",{room:"main"})
 
-            var pr = new PacketRegistry();
-            pr.register("00",new RegisterPacket());
-            pr.register("01",new ChatPacket());
-
-            pr.packetsRegistred.forEach(packet => {
-                socket.on(packet[0],packet[1].handle)
-            });
         });
 
         
