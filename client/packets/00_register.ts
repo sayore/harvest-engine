@@ -1,4 +1,3 @@
-import { player } from "..";
 import { BasePacket } from "./base";
 
 export class RegisterPacket extends BasePacket {
@@ -10,7 +9,7 @@ export class RegisterPacket extends BasePacket {
 
         if(!!args.uni) {
 
-            player.UniqueIdentifier = args.uni;
+            this.game.UniqueIdentifier = args.uni;
         }
     }
 }
