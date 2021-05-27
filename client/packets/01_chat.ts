@@ -1,4 +1,5 @@
 import { Socket } from "socket.io-client";
+import { Chat } from "../wrappers/chat";
 import { BasePacket } from "./base";
 
 export class ChatPacket extends BasePacket {
@@ -10,7 +11,7 @@ export class ChatPacket extends BasePacket {
     handle(args:object | Array<string>) {
         if(Array.isArray(args)) {
             args.forEach((str)=>{
-                (<HTMLDivElement>document.querySelector('#chat')).innerText+=`${str}\n`;
+                Chat.addmessage(str);
             })
         }
         console.log(args);

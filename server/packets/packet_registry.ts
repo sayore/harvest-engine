@@ -9,7 +9,7 @@ export class PacketRegistry {
     public player: Player;
 
     public register(name: string, packet : BasePacket) {
-        //console.log("Registred ",name," Packet", packet)
+        console.log("Registred ",name," Packet", packet.constructor.name)
         packet.setPlayer(this.player); 
         //console.log(packet);
         this.packetsRegistred.push([name, packet]);

@@ -2,6 +2,11 @@
     font-family: 'Didact Gothic', sans-serif;
 }
 
+body {
+    margin:0;
+    position:absolute;;
+}
+
 #chat-wrapper {
     position:absolute;
     bottom:0px;left:20px;
@@ -10,12 +15,56 @@
 }
 
 #chat {
-    position:relative;
+    position: relative;
     left:10px;
+    max-height:120px;
+    overflow-y:scroll;
+    vertical-align: bottom;
+    margin: 0 5px;
 }
 
 #sendText {
     width:100%;
     border:3px solid black;
     border-radius:5px;
+}
+
+.menubutton {
+    width:66px;height:66px;
+    background-color:greenyellow;
+    border:1px solid black;
+}
+.chatmsg {
+    background-color: #00000057;
+border-left: 1px solid black;
+padding-left: 11px;
+margin-top: 2px;
+margin-right: 12px;
+overflow-wrap: break-word;
+}
+
+#game {
+    background-color:red;
+    width:100vw; height:100vh;
+}
+
+#player {
+    background-color:rgba(0, 128, 0, 0.336);
+    min-width:32px;min-height:32px;
+}
+#map {
+    background-color:rgba(255, 255, 0, 0.418);
+}
+
+#admin {
+    position:absolute;
+    display:flex;
+    flex-direction: row;
+    top:10px;
+    left:10px;
+}
+#adminclipin {
+    width:22px;height:66px;
+    background-color:white;
+    border: 1px solid black;
 }

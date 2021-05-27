@@ -1,9 +1,9 @@
 import { io } from "socket.io-client";
+import { AdminGUI } from "./gui/admin";
 import { RegisterPacket } from "./packets/00_register";
-import { ChatBroadcastPacket } from "./packets/01b_chatbroadcast";
 import { ChatPacket } from "./packets/01_chat";
 import { PacketRegistry } from "./packets/packet_registry";
-import { Player } from "./player";
+import { Player } from "./game/entities/player";
 import { Chat } from "./wrappers/chat";
 
 export let socket = io("http://176.199.119.94:8000/",{
@@ -12,8 +12,12 @@ export let socket = io("http://176.199.119.94:8000/",{
     }
   });
 
-export let player = new Player(socket);
+export let game = new Game(socket);
+game.add(new Player());
 export let chat = new Chat();
+export let admingui = new AdminGUI();
+
+admingui.create();
 
 setInterval(()=>{
     console.log(socket.active)

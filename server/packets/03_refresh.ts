@@ -5,8 +5,8 @@ import { BasePacket } from "./base";
 
 export class RefreshPacket extends BasePacket{
     handle(args:{msg:string}) {
-        memoryStorage.lrange("chat",-20,100,(err,res)=>{
-            this.player.socket.emit("01",res);
+        memoryStorage.lrange("chat",0,20,(err,res)=>{
+            this.player.socket.emit("01",res.reverse());
         })
         
     }

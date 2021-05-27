@@ -5,7 +5,9 @@ import { BasePacket } from "./base";
 
 export class ChatPacket extends BasePacket{
     handle(args:{msg:string}) {
-        memoryStorage.rpush("chat",this.player.extra.name+": "+args.msg);
+        args.msg = args.msg.slice(0,256)
+        memoryStorage.lpush("chat",this.player.extra.name+": "+args.msg);
+        memoryStorage.ltrim("chat",0,20);
         eHTTPServer.io.emit('01b',{msg:this.player.extra.name+": "+args.msg})
 
     }
