@@ -1,7 +1,9 @@
 const path = require('path');
 
+var globalMode = 'development';
+
 const clientConfig = {
-  mode: 'development',
+  mode: globalMode,
   entry: './client/index.ts',
   module: {
     rules: [
@@ -24,7 +26,7 @@ const clientConfig = {
 
 
 const serverConfig = {
-  mode: 'development',
+  mode: globalMode,
   target: 'node16.2',
   entry: './server/index.ts',
   module: {
