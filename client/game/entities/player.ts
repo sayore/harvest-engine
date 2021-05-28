@@ -3,7 +3,7 @@ import { RegisterPacket } from "../../packets/00_register";
 import { ChatResetPacket } from "../../packets/06b_reset";
 import { ChatPacket } from "../../packets/01_chat";
 import { PacketRegistry } from "../../packets/packet_registry";
-import { ChatBroadcastPacket } from "../../packets/01b_chatbroadcast copy";
+import { ChatBroadcastPacket } from "../../packets/01b_chatbroadcast";
 import { Entity } from "../entity";
 
 export class Player extends Entity{
