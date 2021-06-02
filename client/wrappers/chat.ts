@@ -9,6 +9,11 @@ export class Chat {
     }
 
     static addmessage(str:string) {
+        if(typeof(str)!="string") {
+            console.log("chat.addmessage has received a non-string value(an "+typeof(str)+") and will abort. ("+JSON.stringify(str)+")");
+            return;
+        }
+        
         let chatgui = document.querySelector<HTMLDivElement>('#chat');
         var chatmsg = document.createElement('div');
         chatmsg.classList.add("chatmsg");
@@ -28,6 +33,32 @@ export class Chat {
             chatgui.removeChild(chatgui.firstChild);
         }
         chatgui.scrollTop = chatgui.scrollHeight;
+
+    }
+
+    static addmessages(strarr:string[]) {
+        let chatgui = document.querySelector<HTMLDivElement>('#chat');
+        strarr.forEach(str => {
+            
+        var chatmsg = document.createElement('div');
+        chatmsg.classList.add("chatmsg");
+        //chatmsg.addEventListener('click',el.action);
+
+        // Remove all new lines except for the first 2
+        var spl = str.split('\n')
+        var out = spl[0]+'\n'+(spl[1] || "")+(!!spl[1]?'\n':"");
+        spl = spl.slice(2);
+        out+=spl.join();
+
+        chatmsg.innerText = out;
+        chatmsg.setAttribute('alt',str);
+        chatgui.appendChild(chatmsg);
+
+        if(chatgui.children.length > 20) {
+            chatgui.removeChild(chatgui.firstChild);
+        }
+    });
+    chatgui.scrollTop = chatgui.scrollHeight;
 
     }
 

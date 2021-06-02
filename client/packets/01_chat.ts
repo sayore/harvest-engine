@@ -9,6 +9,7 @@ export class ChatPacket extends BasePacket {
     }
     // Loading Chat messages, this will be received if the client sends a 05.
     handle(args:object | Array<string>) {
+        console.log("01:",args);
         if(Array.isArray(args)) {
             args.forEach((str)=>{
                 Chat.addmessage(str);

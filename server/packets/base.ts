@@ -1,5 +1,5 @@
 import { Socket } from "socket.io/dist/socket";
-import { Player } from "../lib/player";
+import { Player } from "../game/entities/player";
 
 export class BasePacket {
     public player: Player;

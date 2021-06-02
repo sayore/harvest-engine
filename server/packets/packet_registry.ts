@@ -1,6 +1,6 @@
 import { StrictEventEmitter } from "socket.io-client/build/typed-events";
 import { Socket } from "socket.io/dist/socket";
-import { Player } from "../lib/player";
+import { Player } from "../game/entities/player";
 import { BasePacket } from "./base";
 
 export class PacketRegistry {

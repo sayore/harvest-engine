@@ -4,7 +4,6 @@ export class Entity {
     game:Game;
     UniqueIdentifier: string;
     Type:string="NoTypeEntity";
-    uuid: string;
 
     initialize() {}
 

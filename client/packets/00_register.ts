@@ -5,11 +5,11 @@ export class RegisterPacket extends BasePacket {
         // Received a registration request
         console.log("Working Packet 00: "+ JSON.stringify(args));
 
-        console.log(this);
+        //console.log(this);
 
         if(!!args.uni) {
-
-            this.game.UniqueIdentifier = args.uni;
+            this.game.entities.find(m=>m.Type=="Player").uuid= args.uuid;
+            console.log("Players uuid has been set to: "+args.uuid);
         }
     }
 }

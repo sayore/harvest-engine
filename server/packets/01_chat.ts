@@ -8,6 +8,8 @@ export class ChatPacket extends BasePacket{
         args.msg = args.msg.slice(0,256)
         memoryStorage.lpush("chat",this.player.extra.name+": "+args.msg);
         memoryStorage.ltrim("chat",0,20);
+        memoryStorage.expire('chat',360);
+        console.log({msg:this.player.extra.name+": "+args.msg});
         eHTTPServer.io.emit('01b',{msg:this.player.extra.name+": "+args.msg})
 
     }

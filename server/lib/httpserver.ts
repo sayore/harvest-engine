@@ -1,16 +1,21 @@
+import cuid from "cuid";
 import * as express from "express";
 import path from "path";
 import { Server } from "socket.io";
-import { Player } from "./player";
+import { Player } from "../game/entities/player";
+import { Game } from "../game/game";
 
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server,{
+    maxHttpBufferSize:5e4,
+    cookie:true,
+});
 
 export class eHTTPServer {
     static io: Server;
-    static players: Player[] = [];
+    static game: Game = new Game();
 
     static start() {
 
@@ -19,15 +24,16 @@ export class eHTTPServer {
         });
 
         app.use(express.static(path.join(__dirname, '../')));
+        app.use("/sprite",express.static(path.join(__dirname, '../assets')));
 
         this.io = io;
         io.on("connection", (socket) => {
             
             console.log(socket.handshake.query); // prints { x: "42", EIO: "4", transport: "polling" }
-            this.players.push(new Player(socket));
-            socket.emit("00",{ok:200, uni: Math.floor(Math.random()*10000000)})
+            var playersUUID = cuid()
+            this.game.add(new Player(cuid(), socket));
             socket.join('main');
-            socket.emit("00",{room:"main"})
+            socket.emit("00",{room:"main",uuid:playersUUID,ok:200, uni: Math.floor(Math.random()*10000000)})
 
         });
 
