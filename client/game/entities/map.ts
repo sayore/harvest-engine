@@ -27,8 +27,8 @@ export class Map extends Entity implements IDrawable {
                 var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture,64,64);
                 ts.tilePosition.x =-64*Math.floor(Math.random()*20);
                 ts.tilePosition.y =-64*Math.floor(Math.random()*10);
-                ts.y =65*i;
-                ts.x =65*j;
+                ts.y =64*i;
+                ts.x =64*j;
                 this.MyGraphics.addChild(ts);
             }
         }

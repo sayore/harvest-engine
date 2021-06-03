@@ -19,6 +19,7 @@ export class Game {
     stage:Container;
     gameWidth: number;
     gameHeight: number;
+    globalOffset: [x: number, y: number] = [0, 0];
     fpsCounter:PIXI.Text;
     loader = PIXI.Loader.shared;
     resources = PIXI.Loader.shared.resources;
@@ -38,6 +39,7 @@ export class Game {
         
 
         this.stage = new Container();
+        this.stage.interactive=true;
         
         
         // resize the canvas to fill browser window dynamically
@@ -106,6 +108,8 @@ export class Game {
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].update(progress);
         }
+        this.stage.x+=0.2;
+        //this.globalOffset
     }
 
     startDraw() {
@@ -180,7 +184,7 @@ export class Game {
          * Your drawings need to be inside this function otherwise they will be reset when 
          * you resize the browser window and the canvas goes will be cleared.
          */
-        this.renderer.resize(this.gameWidth,this.gameHeight);
+        this.renderer.resize(this.gameWidth/2   ,this.gameHeight/2); 
         
         //this.draw(); 
         console.log("Resized.")

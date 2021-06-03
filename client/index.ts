@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 import { ABlock } from "./game/entities/ablock";
 import { Map } from "./game/entities/map";
+import { Mouse } from "./game/entities/mouse";
 //import { AdminGUI } from "./gui/admin";
 import { Player } from "./game/entities/player";
 //import { Chat } from "./wrappers/chat";
@@ -16,6 +17,9 @@ export let game = new Game(socket);
 //game.add(new Player());
 
 game.add(new Map([0,0]));
+game.add(new Player());
+game.add(new Mouse([0,0]));
+
 
 
 

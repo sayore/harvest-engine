@@ -10,7 +10,7 @@ import { socket } from "../..";
 import { ICollisionable } from "../../../lib/interface/ICollisionable";
 import { Body, Polygon } from "detect-collisions";
 import * as PIXI from 'pixi.js'
-import { Container, Graphics, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite, TilingSprite } from "pixi.js";
 
 export class Player extends Entity implements IDrawable, ICollisionable {
     private packageRegistry: PacketRegistry;
@@ -21,7 +21,7 @@ export class Player extends Entity implements IDrawable, ICollisionable {
     PhisicalVector: [x: number, y: number] = [0, 0];
     PressedKeys: Set<string> = new Set();
     CollisionBox : Polygon;
-    MySprite:Sprite;
+    MySprite:TilingSprite;
     MyGraphics:Graphics;
 
     constructor(
@@ -62,18 +62,7 @@ export class Player extends Entity implements IDrawable, ICollisionable {
         }, 1000)
 
         this.MyGraphics = new PIXI.Graphics();
-        this.MySprite = PIXI.Sprite.from("sprite/RPGpack_sheet.png",{anisotropicLevel:0});
-        
-        //this.MySprite.scale = new PIXI.ObservablePoint(null,0.5,0.5);
-        //this.MySprite.roundPixels=true;
-        
-        this.MySprite.mask = new PIXI.Graphics();
-        (<Graphics>this.MySprite.mask).beginFill(0x000000);
-        (<Graphics>this.MySprite.mask).drawRect(this.Position[0],this.Position[1],100,100);
-        (<Graphics>this.MySprite.mask).endFill();
-        console.log("Fuyio")
-
-        //this.MyContainer.addChild(this.MySprite)
+        this.MySprite = new TilingSprite(this.game.loader.resources["rpgtileset"].texture,64,64);
 
         this.MyGraphics.addChild(this.MySprite);
         this.game.stage.addChild(this.MyGraphics);
@@ -170,16 +159,16 @@ export class Player extends Entity implements IDrawable, ICollisionable {
     PollingState = 0;
     update() {
         let anypressed=false;
-        if (this.PressedKeys.has("Down")) { this.PhisicalVector[1] += 30*Math.random(); anypressed = true;}
-        if (this.PressedKeys.has("Up")) { this.PhisicalVector[1] -= 30*Math.random(); anypressed = true;}
-        if (this.PressedKeys.has("Left")) { this.PhisicalVector[0] -= 30*Math.random(); anypressed = true;}
-        if (this.PressedKeys.has("Right")) { this.PhisicalVector[0] += 30*Math.random(); anypressed = true;}
+        if (this.PressedKeys.has("Down")) { this.PhisicalVector[1] += 23*Math.random(); anypressed = true;}
+        if (this.PressedKeys.has("Up")) { this.PhisicalVector[1] -= 23*Math.random(); anypressed = true;}
+        if (this.PressedKeys.has("Left")) { this.PhisicalVector[0] -= 25*Math.random(); anypressed = true;}
+        if (this.PressedKeys.has("Right")) { this.PhisicalVector[0] += 25*Math.random(); anypressed = true;}
         
         this.Position[0] += this.PhisicalVector[0] * 0.1;
         this.Position[1] += this.PhisicalVector[1] * 0.1;
 
         this.PhisicalVector[0] *= 0.93;
-        this.PhisicalVector[1] *= 0.93
+        this.PhisicalVector[1] *= 0.93;
         if(!anypressed) {
             this.PhisicalVector[0] *= 0.75;
             this.PhisicalVector[1] *= 0.75;
@@ -192,10 +181,7 @@ export class Player extends Entity implements IDrawable, ICollisionable {
             socket.emit("04",{uuid:this.UniqueIdentifier,position:this.Position})
         }
 
-        (<Graphics>this.MySprite.mask).clear();
-        (<Graphics>this.MySprite.mask).beginFill(0x000000);
-        (<Graphics>this.MySprite.mask).drawRect(this.Position[0],this.Position[1],100,100);
-        (<Graphics>this.MySprite.mask).endFill();
+        
         this.MyGraphics.setTransform(this.Position[0],this.Position[1])
     }
 
