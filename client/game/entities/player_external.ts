@@ -11,6 +11,12 @@ export class PlayerExternal extends Entity implements IDrawable{
         
     ) {
         super();
+
+        setInterval(()=>{
+            this.game.socket.emit("07",()=>{
+                
+            })
+        },500)
     }
 
     draw() {
