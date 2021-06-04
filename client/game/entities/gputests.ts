@@ -29,6 +29,9 @@ export class GPUTests extends Entity implements IDrawable {
     private amount = 1;
     private pauseCounter=0;
     update() {
+        this.fpsCounter.x = -this.game.stage.x+1000;
+        this.fpsCounter.y = -this.game.stage.y+50;
+        
         this.pauseCounter+=1;
         if(this.pauseCounter != 10) {
             this.fpsCounter.text = this.pauseCounter+" " + this.amount;

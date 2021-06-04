@@ -1,11 +1,15 @@
 import { Graphics, ObservablePoint, Sprite, Text, TilingSprite } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
 import { Entity } from "../entity";
+import { VisibleChunk } from "./map/visibleChunk";
 
 
 export class Map extends Entity implements IDrawable {
     MyGraphics: Graphics;
     fpsCounter: Text;
+    drawnChunks: VisibleChunk[];
+
+    
 
     constructor(
         public Position: [x: number, y: number] = [0, 0]
@@ -57,6 +61,9 @@ export class Map extends Entity implements IDrawable {
         //    this.MyTileset2.tilePosition.x--;
         //    console.log(this.MyTileset3.tilePosition.y+" "+this.amount);
         //}
+
+        this.fpsCounter.x = -this.game.stage.x+150;
+        this.fpsCounter.y = -this.game.stage.y+20;
     }
 
     draw() {

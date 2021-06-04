@@ -4,6 +4,7 @@ import { Entity } from "../entity";
 
 export class Player extends Entity{
     public packageRegistry: PacketRegistry;
+    public Position: [x: number, y: number] = [0, 0];
     public extra: any = {
         name:["Alp","Bet","Gam","Ome","San"][Math.floor(Math.random()*5)]
         +["Alp","Bet","Gam","Ome","San"][Math.floor(Math.random()*5)]

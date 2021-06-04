@@ -17,8 +17,8 @@ export let game = new Game(socket);
 //game.add(new Player());
 
 game.add(new Map([0,0]));
-game.add(new Player());
 game.add(new Mouse([0,0]));
+game.add(new Player()); 
 
 
 

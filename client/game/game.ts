@@ -17,6 +17,7 @@ export class Game {
     canvas: HTMLCanvasElement
     renderer:AbstractRenderer;
     stage:Container;
+    gui:Container;
     gameWidth: number;
     gameHeight: number;
     globalOffset: [x: number, y: number] = [0, 0];
@@ -84,7 +85,10 @@ export class Game {
             if(this.fpsMedian.length>100)
             this.fpsMedian.shift();
 
+            
             this.fpsCounter.text = (this.fpsMedian.reduce((a,y)=>(a+y))/this.fpsMedian.length).toPrecision(4) + "("+this.fpsMedian.length+")\n"+this.entities.length;
+            this.fpsCounter.x = -this.stage.x+550;
+            this.fpsCounter.y = -this.stage.y+20;
             
             this.renderer.render(this.stage); 
         });
@@ -109,6 +113,7 @@ export class Game {
             this.entities[i].update(progress);
         }
         this.stage.x+=0.2;
+        this.stage.y+=0.2;
         //this.globalOffset
     }
 

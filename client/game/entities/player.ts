@@ -76,21 +76,25 @@ export class Player extends Entity implements IDrawable, ICollisionable {
             switch (event.key) {
                 case "Down": // IE/Edge specific value
                 case "ArrowDown":
+                case "s":
                     this.PressedKeys.add("Down");
                     // Do something for "down arrow" key press.
                     break;
                 case "Up": // IE/Edge specific value
                 case "ArrowUp":
+                case "w":
                     this.PressedKeys.add("Up");
                     // Do something for "up arrow" key press.
                     break;
                 case "Left": // IE/Edge specific value
                 case "ArrowLeft":
+                case "a":
                     this.PressedKeys.add("Left");
                     // Do something for "left arrow" key press.
                     break;
                 case "Right": // IE/Edge specific value
                 case "ArrowRight":
+                case "d":
                     this.PressedKeys.add("Right");
                     // Do something for "right arrow" key press.
                     break;
@@ -115,25 +119,29 @@ export class Player extends Entity implements IDrawable, ICollisionable {
             if (event.defaultPrevented) {
                 return; // Do nothing if the event was already processed
             }
-
+            console.log(event.key);
             switch (event.key) {
                 case "Down": // IE/Edge specific value
                 case "ArrowDown":
+                case "s":
                     this.PressedKeys.delete("Down");
                     // Do something for "down arrow" key press.
                     break;
                 case "Up": // IE/Edge specific value
                 case "ArrowUp":
+                case "w":
                     this.PressedKeys.delete("Up");
                     // Do something for "up arrow" key press.
                     break;
                 case "Left": // IE/Edge specific value
                 case "ArrowLeft":
+                case "a":
                     this.PressedKeys.delete("Left");
                     // Do something for "left arrow" key press.
                     break;
                 case "Right": // IE/Edge specific value
                 case "ArrowRight":
+                case "d":
                     this.PressedKeys.delete("Right");
                     // Do something for "right arrow" key press.
                     break;
@@ -183,6 +191,8 @@ export class Player extends Entity implements IDrawable, ICollisionable {
 
         
         this.MyGraphics.setTransform(this.Position[0],this.Position[1])
+        this.game.stage.x = -this.Position[0] + this.game.renderer.width/2 - this.MySprite.width/2;
+        this.game.stage.y = -this.Position[1] + this.game.renderer.height/2 - this.MySprite.height/2;
     }
 
     draw() {
