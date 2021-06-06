@@ -4,30 +4,38 @@ import { ICollisionable } from "../../lib/interface/ICollisionable";
 import { TypeCheck } from "../../lib/typeCheck";
 import { Entity } from "./entity";
 import * as PIXI from 'pixi.js'
-import { AbstractRenderer, Container, Loader, Resource } from "pixi.js";
+import { AbstractRenderer, Container, Loader, Resource, Text, TextStyle } from "pixi.js";
 
 export class Game {
     
     public lastRender = 0
     public socket : Socket;
     public entities: Entity[] = [];
+    
+    //SYSTEMS
     CollisionSystem = new Collisions();
     UniqueIdentifier: any;
     context: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement
     renderer:AbstractRenderer;
+
+    // THIS IS THE LAYER CONTROLL
+    baseContainer: Container;
+    
+    // LAYERS
     stage:Container;
     gui:Container;
+    
     gameWidth: number;
     gameHeight: number;
     globalOffset: [x: number, y: number] = [0, 0];
-    fpsCounter:PIXI.Text;
-    loader = PIXI.Loader.shared;
-    resources = PIXI.Loader.shared.resources;
+    fpsCounter:Text;
+    loader = Loader.shared;
+    resources = Loader.shared.resources;
     fpsMedian:number[] = [];
     initialized: any;
 
-    constructor(socket: Socket) {
+    start(socket: Socket) {
         //this.canvas = document.querySelector<HTMLCanvasElement>('#gameCanvas'),
         //this.context = this.canvas.getContext('2d');
 
@@ -41,6 +49,9 @@ export class Game {
 
         this.stage = new Container();
         this.stage.interactive=true;
+
+        this.gui = new Container();
+        this.gui.interactive=true;
         
         
         // resize the canvas to fill browser window dynamically
@@ -52,21 +63,34 @@ export class Game {
 
 
         this.loader
+            .add('PressStart2P-Regular', "sprite/PressStart2P-Regular.ttf")
+            .add("player","sprite/player-v1.png")
             .add("rpgtileset","sprite/RPGpack_sheet.png")
             .add("test","sprite/test.txt")
-            .load((resources)=>{this.initialize(resources)});
+            .load();
+        
+        this.loader.onComplete.add(() => {
+            //console.log("Loaded all resources.. [ "+ this.loader. +" ]")
+            this.initialize();
+        }); 
         
 
         
         //this.startDraw();
     }
 
-    initialize(resources:Resource) {
+    initialize() {
         console.log("Initializing..")
 
         this.resizeCanvas();
+
+        this.baseContainer = new Container();
+        this.baseContainer.addChild(this.stage,this.gui);
+
         console.log(this);
-        setInterval(()=>{this.loop(0);},1000/60)
+        setInterval(()=>{
+            this.loop(0);
+        },1000/60)
         let ticker = PIXI.Ticker.shared;
         ticker.stop();
         ticker.speed=3;
@@ -81,6 +105,8 @@ export class Game {
         ticker.start();
         
         ticker.add((time) => {
+            // THIS IS HE REAL GAME LOOP!!
+            // LOOK HERE
             this.fpsMedian.push(ticker.FPS);
             if(this.fpsMedian.length>100)
             this.fpsMedian.shift();
@@ -89,22 +115,26 @@ export class Game {
             this.fpsCounter.text = (this.fpsMedian.reduce((a,y)=>(a+y))/this.fpsMedian.length).toPrecision(4) + "("+this.fpsMedian.length+")\n"+this.entities.length;
             this.fpsCounter.x = -this.stage.x+550;
             this.fpsCounter.y = -this.stage.y+20;
+
+            // Lock GUI to Stage(camera)
+            this.gui.x = 0;
+            this.gui.y = 0;
             
-            this.renderer.render(this.stage); 
+            this.renderer.render(this.baseContainer); 
         });
 
         // Initialize
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].initialize();
         }
-        this.fpsCounter = new PIXI.Text("No Text");
+        this.fpsCounter = new PIXI.Text("No Text",{fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black'});
         this.fpsCounter.x = 920;
             this.fpsCounter.y = 10;
-            this.fpsCounter.zIndex=10
         this.stage.addChild(this.fpsCounter);
 
         this.initialized=true;
-        console.log("Initialized")
+        console.log("Initialized");
+        this.registerCollisionObjects();
     }
 
     update(progress:number) {
@@ -112,9 +142,18 @@ export class Game {
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].update(progress);
         }
-        this.stage.x+=0.2;
-        this.stage.y+=0.2;
-        //this.globalOffset
+    }
+    preUpdate(progress:number) {
+        // Update the state of the world for the elapsed time since last render
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].preUpdate(progress);
+        }
+    }
+    postUpdate(progress:number) {
+        // Update the state of the world for the elapsed time since last render
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].postUpdate(progress);
+        }
     }
 
     startDraw() {
@@ -131,11 +170,13 @@ export class Game {
             if(TypeCheck.isCollidable(ent))
             {
                 this.movableEntities.push(ent);
+                console.log("Added "+ ent.Type);
             }
         }
     }
 
     handleCollisions() {
+        let result = this.CollisionSystem.createResult();
         for (let i = 0; i < this.movableEntities.length; i++) {
             const movableEntity = this.movableEntities[i];
 
@@ -145,8 +186,8 @@ export class Game {
                 const potentials = body.potentials();
 
                 for (const other of potentials) {
-                    if (body.collides(other)) {
-                        console.log('Collision detected!');
+                    if (body.collides(other,result)) {
+                        movableEntity.collided(result);
                     }
                 }
             }
@@ -156,7 +197,9 @@ export class Game {
     loop(timestamp:DOMHighResTimeStamp) {
         var progress = timestamp - this.lastRender
 
+        this.preUpdate(progress)
         this.update(progress)
+        this.postUpdate(progress)
         this.CollisionSystem.update();
         this.handleCollisions();
 
@@ -175,8 +218,16 @@ export class Game {
         if(this.initialized) entity.initialize();
     }
 
-    remove(entity: Entity) {
-        
+    getEntity<T extends Entity>(type:string) : T {
+        return <T>this.entities.find((e)=>e.Type==type);
+    }
+    getEntities<T extends Entity>(type:string) : T[] {
+        return <T[]>this.entities.filter((e)=>e.Type==type);
+    }
+
+    removeEntity(entity: Entity) {
+        entity.unload();
+        this.entities = this.entities.filter(e => e!=entity);
     }
 
     resizeCanvas() {

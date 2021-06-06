@@ -1,11 +1,11 @@
 import { IDrawable } from "../../../lib/interface/IDrawable";
+import { Vector } from "../../../lib/types/vector";
 import { Entity } from "../entity";
 
 export class PlayerExternal extends Entity implements IDrawable{
     UniqueIdentifier: any;
     
     Type="PlayerExternal";
-    Position: [x: number, y: number] = [300,300];
 
     constructor(
         
@@ -18,12 +18,13 @@ export class PlayerExternal extends Entity implements IDrawable{
             })
         },500)
     }
+    Position: Vector;
 
     draw() {
         this.game.context.fillStyle = "#BB2200";
         this.game.context.fillRect(
-            this.Position[0]+0,
-            this.Position[1]+0,
+            this.Position.x,
+            this.Position.y,
             50,
             50);
     }

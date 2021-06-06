@@ -1,19 +1,14 @@
 import { Graphics, Text } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
+import { Vector } from "../../../lib/types/vector";
 import { Entity } from "../entity";
 
 export class GPUTests extends Entity implements IDrawable {
+    Position: Vector;
     MyGraphics: Graphics;
     fpsCounter: Text;
 
-    constructor(
-        public Position: [x: number, y: number] = [0, 0]
-    ) {
-        super();
 
-
-
-    }
 
     initialize() {
         this.MyGraphics = new Graphics();
@@ -43,11 +38,11 @@ export class GPUTests extends Entity implements IDrawable {
 
             var newRects = () => {
                 this.MyGraphics.beginFill(Math.round(Math.random() * 0xFFFFFF));
-                this.MyGraphics.drawRect(this.Position[0] + this.amount % 200 * 4, this.Position[1] + Math.floor(this.amount / 1000*4) + 20, 3, 3);
-                this.MyGraphics.drawRect(this.Position[0] + (this.amount+1) % 200 * 4, this.Position[1] + Math.floor((this.amount+1) / 1000*4) + 20, 3, 3);
-                this.MyGraphics.drawRect(this.Position[0] + (this.amount+2) % 200 * 4, this.Position[1] + Math.floor((this.amount+2) / 1000*4) + 20, 3, 3);
-                this.MyGraphics.drawRect(this.Position[0] + (this.amount+3) % 200 * 4, this.Position[1] + Math.floor((this.amount+3) / 1000*4) + 20, 3, 3);
-                this.MyGraphics.drawRect(this.Position[0] + (this.amount+4) % 200 * 4, this.Position[1] + Math.floor((this.amount+4) / 1000*4) + 20, 3, 3);
+                this.MyGraphics.drawRect(this.Position.x + this.amount % 200 * 4, this.Position.y + Math.floor(this.amount / 1000*4) + 20, 3, 3);
+                this.MyGraphics.drawRect(this.Position.x + (this.amount+1) % 200 * 4, this.Position.y + Math.floor((this.amount+1) / 1000*4) + 20, 3, 3);
+                this.MyGraphics.drawRect(this.Position.x + (this.amount+2) % 200 * 4, this.Position.y + Math.floor((this.amount+2) / 1000*4) + 20, 3, 3);
+                this.MyGraphics.drawRect(this.Position.x + (this.amount+3) % 200 * 4, this.Position.y + Math.floor((this.amount+3) / 1000*4) + 20, 3, 3);
+                this.MyGraphics.drawRect(this.Position.x + (this.amount+4) % 200 * 4, this.Position.y + Math.floor((this.amount+4) / 1000*4) + 20, 3, 3);
                 this.MyGraphics.endFill();
                 
                 this.amount += 5;
@@ -64,8 +59,8 @@ export class GPUTests extends Entity implements IDrawable {
     draw() {
         /*this.game.context.fillStyle = "#BB2200";
         this.game.context.fillRect(
-            this.Position[0] + 0,
-            this.Position[1] + 0,
+            this.Position.x + 0,
+            this.Position.y + 0,
             50,
             50);*/
     }

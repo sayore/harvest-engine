@@ -22,6 +22,10 @@ const clientConfig = {
     filename: 'client.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  externals: {
+    "socket.io-client":"io",
+    "pixi.js":"PIXI" // WORKS DONT CHANGE
+  }
 };
 
 
@@ -50,7 +54,9 @@ const serverConfig = {
   externals: {
     express: 'express',
     bufferutil: 'bufferutil',
-    'utf-8-validate':'utf-8-validate'
+    'socket.io': 'socket.io',
+    'utf-8-validate':'utf-8-validate',
+    'better-sqlite3': 'commonjs better-sqlite3'
   },
 };
 

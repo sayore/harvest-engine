@@ -1,6 +1,8 @@
-* {
-    font-family: 'Didact Gothic', sans-serif;
+@font-face{
+    font-family: "PressStart2P-Regular";
+    src: url("sprite/PressStart2P-Regular.ttf");
 }
+
 
 body {
     margin:0;
@@ -83,5 +85,6 @@ canvas {
     height:100vh;
     text-rendering: crisp-edges;
     image-rendering: crisp-edges;
+    image-rendering: pixelated;
     shape-rendering: crispEdges;
 }

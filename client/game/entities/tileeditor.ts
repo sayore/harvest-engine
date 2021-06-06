@@ -1,17 +1,11 @@
 import { Graphics, TilingSprite } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
+import { Vector } from "../../../lib/types/vector";
 import { Entity } from "../entity";
 
 export class Tileeditor extends Entity implements IDrawable {
+    Position: Vector;
     MyGraphics:Graphics;
-
-    constructor(
-        public Position: [x: number, y: number] = [0,0]
-        ) { super();
-
-            
-        
-        }
     
     initialize() {
         this.MyGraphics = new Graphics();

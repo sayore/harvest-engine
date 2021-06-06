@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { Vector } from "../lib/types/vector";
 import { ABlock } from "./game/entities/ablock";
 import { Map } from "./game/entities/map";
 import { Mouse } from "./game/entities/mouse";
@@ -6,21 +7,35 @@ import { Mouse } from "./game/entities/mouse";
 import { Player } from "./game/entities/player";
 //import { Chat } from "./wrappers/chat";
 import { Game } from "./game/game";
+import { InputHandler } from "./game/input";
 
-export let socket = io("http://176.199.119.94:8000/",{
+console.log("Game Server.. ")
+//export let socket = io("https://sayore.de/",{
+
+export let socket = io("https://sayore.de/",{
+    secure: true,
     query: {
-      x: "42"
+      x: "42",
+      requestedUUID: <string>localStorage.getItem('uuid') || undefined
     }
   });
 
-export let game = new Game(socket);
+export let game = new Game();
 //game.add(new Player());
 
-game.add(new Map([0,0]));
-game.add(new Mouse([0,0]));
-game.add(new Player()); 
+game.add(new InputHandler());
+game.add(new Map());
+game.add(new Mouse());
+game.add(new Player());
 
+for (let i = 0; i < 100; i++) {
+  //const element = array[i];
+  let newBlock = new ABlock()
+    newBlock.Position=new Vector(Math.random()*1000,Math.random()*1000);
+  game.add(newBlock);
+}
 
+game.start(socket);
 
 
 //setInterval(()=>{

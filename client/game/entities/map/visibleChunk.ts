@@ -3,14 +3,13 @@ import { Vector } from "../../../../lib/types/vector";
 import { Entity } from "../../entity";
 
 export class VisibleChunk extends Entity implements IChunk  {
-    constructor(
-        public Position: [x: number, y: number] = [0,0]
-    ) {
-        super();
-    }
+    
+    chunkSize: number;
     globalPosition: Vector;
-    tiles: Vector;
+    tiles: Vector; 
+    Position: Vector;
+    StaticEntities:Entity[];
     load() {
-        this.game.socket.emit("07",{X:this.Position[0],Y:this.Position[1]})
+        this.game.socket.emit("07",{X:this.Position.x,Y:this.Position.y})
     }
 }

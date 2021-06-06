@@ -1,39 +1,48 @@
+import { Body, Circle, Polygon, Result } from "detect-collisions";
 import { Graphics } from "pixi.js";
+import { ICollisionable } from "../../../lib/interface/ICollisionable";
 import { IDrawable } from "../../../lib/interface/IDrawable";
+import { OwnerKnowingBody } from "../../../lib/types/ownerKnowingBody";
+import { Vector } from "../../../lib/types/vector";
 import { Entity } from "../entity";
 
-export class ABlock extends Entity implements IDrawable {
+export class ABlock extends Entity implements IDrawable, ICollisionable {
+    collided(result:Result): void {
+        this.Position.x -= result.overlap * result.overlap_x;
+		this.Position.y -= result.overlap * result.overlap_y;
+        
+        return;
+    }
+    Type = "ABlock";
+    CollisionBox: Circle;
+    getColliders(): Body[] {
+        if(!this.CollisionBox) return [];
+
+        return [this.CollisionBox]
+    }
+    canMove(): boolean {
+        return true;
+    }
+
     MyGraphics:Graphics;
 
-    constructor(
-        public Position: [x: number, y: number] = [0,0]
-        ) { super();
+    Position= new Vector(200,200);
 
-            
-        
-        }
-    
     initialize() {
         this.MyGraphics = new Graphics();
-            this.MyGraphics.beginFill(0xFFFFFF);
-            this.MyGraphics.drawRect(this.Position[0],this.Position[1],100,100);
-            this.MyGraphics.endFill();
-            this.game.stage.addChild(this.MyGraphics);
+        this.MyGraphics.beginFill(0xFFFFFF);
+        this.MyGraphics.drawCircle(0,0,32);
+        this.MyGraphics.endFill();
+        this.MyGraphics.setTransform(this.Position.x, this.Position.y)
+        this.game.stage.addChild(this.MyGraphics);
+
+        this.CollisionBox = this.game.CollisionSystem.createCircle(this.Position.x-32, this.Position.y-32, 32);
+        this.CollisionBox.owner=this;
     }
 
-    private amount=1;
     update() {
-        this.MyGraphics.x+=Math.random()*this.amount-this.amount+2;
-        this.MyGraphics.y+=Math.random()*this.amount-this.amount+2;
-        this.amount*=1.01;
-    }
-
-    draw() {
-        /*this.game.context.fillStyle = "#BB2200";
-        this.game.context.fillRect(
-            this.Position[0] + 0,
-            this.Position[1] + 0,
-            50,
-            50);*/
+        this.CollisionBox.x = this.Position.x-32;
+        this.CollisionBox.y = this.Position.y-32;
+        this.MyGraphics.setTransform(this.Position.x, this.Position.y)
     }
 }

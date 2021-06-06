@@ -1,3 +1,5 @@
+import { Vector } from "../types/vector";
+
 export interface IDrawable {
-    Position: [x:number,y:number];
+    Position: Vector;
 }
