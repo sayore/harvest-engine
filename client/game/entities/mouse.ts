@@ -24,20 +24,20 @@ export class Mouse extends Entity implements IDrawable {
         this.tilePos.zIndex=-100;
         this.game.gui.addChild(this.tilePos);
             
-            this.game.stage.on("mousemove",(ev:any)=>{
-                //console.log(ev.data);
-                //console.log(ev.data.global.x+", "+ev.data.global.y);
-                this.Position.x = ev.data.global.x-this.game.stage.x;
-                this.Position.y = ev.data.global.y-this.game.stage.y;
-                if(this.Position.x<0) {
-                    this.Position.x-=64;
-                }
-                if(this.Position.y<0) {
-                    this.Position.y-=64;
-                }
-                this.MyGraphics.x=this.Position.x-this.Position.x%64;
-                this.MyGraphics.y=this.Position.y-this.Position.y%64;
-            });
+        this.game.stage.on("mousemove",(ev:any)=>{
+            //console.log(ev.data);
+            //console.log(ev.data.global.x+", "+ev.data.global.y);
+            this.Position.x = ev.data.global.x-this.game.stage.x;
+            this.Position.y = ev.data.global.y-this.game.stage.y;
+            if(this.Position.x<0) {
+                this.Position.x-=64;
+            }
+            if(this.Position.y<0) {
+                this.Position.y-=64;
+            }
+            this.MyGraphics.x=this.Position.x-this.Position.x%64;
+            this.MyGraphics.y=this.Position.y-this.Position.y%64;
+        });
     }
 
     guiInit() {

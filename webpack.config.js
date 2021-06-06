@@ -23,6 +23,7 @@ const clientConfig = {
     path: path.resolve(__dirname, 'dist'),
   },
   externals: {
+    //"detect-collisions":"detect-collisions",
     "socket.io-client":"io",
     "pixi.js":"PIXI" // WORKS DONT CHANGE
   }
