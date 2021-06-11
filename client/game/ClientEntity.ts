@@ -1,7 +1,8 @@
-import { Game } from "./game";
+import { CommonEntity } from "../../lib/CommonEntity";
+import { ClientGame } from "./ClientGame";
 
-export class Entity {
-    game:Game;
+export class ClientEntity extends CommonEntity {
+    game:ClientGame;
     UniqueIdentifier: string;
     Type:string="NoTypeEntity";
     uuid: string;

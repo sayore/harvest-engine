@@ -2,15 +2,20 @@ import { Collisions } from "detect-collisions";
 import { Socket } from "socket.io-client";
 import { ICollisionable } from "../../lib/interface/ICollisionable";
 import { TypeCheck } from "../../lib/typeCheck";
-import { Entity } from "./entity";
+import { ClientEntity } from "./ClientEntity";
 import * as PIXI from 'pixi.js'
 import { AbstractRenderer, Container, Loader, Resource, Text, TextStyle } from "pixi.js";
+import { Vector } from "../../lib/types/Vector";
+import { CommonGame } from "../../lib/CommonGame";
 
-export class Game {
+export class ClientGame extends CommonGame {
     
     public lastRender = 0
     public socket : Socket;
-    public entities: Entity[] = [];
+    public entities: ClientEntity[] = [];
+    public coreTilesize = new Vector(64,64);
+    public coreChunksize = new Vector(8,8);
+    public coreChunkSizeInPixels = Vector.mul(this.coreTilesize,this.coreChunksize);
     
     //SYSTEMS
     CollisionSystem = new Collisions();
@@ -23,6 +28,7 @@ export class Game {
     baseContainer: Container;
     
     // LAYERS
+    map:Container;
     stage:Container;
     gui:Container;
     
@@ -33,7 +39,7 @@ export class Game {
     loader = Loader.shared;
     resources = Loader.shared.resources;
     fpsMedian:number[] = [];
-    initialized: any;
+    
 
     start(socket: Socket) {
         //this.canvas = document.querySelector<HTMLCanvasElement>('#gameCanvas'),
@@ -46,6 +52,9 @@ export class Game {
         document.body.appendChild(this.renderer.view);
 
         
+
+        this.map = new Container();
+        this.map.interactive=true;
 
         this.stage = new Container();
         this.stage.interactive=true;
@@ -85,7 +94,7 @@ export class Game {
         this.resizeCanvas();
 
         this.baseContainer = new Container();
-        this.baseContainer.addChild(this.stage,this.gui);
+        this.baseContainer.addChild(this.map,this.stage,this.gui);
 
         console.log(this);
         setInterval(()=>{
@@ -101,8 +110,7 @@ export class Game {
         // FYI, call this to ensure the ticker is stopped. It should be stopped
         // if you have not attempted to render anything yet.
         
-        // Call this when you are ready for a running shared ticker.
-        ticker.start();
+        
         
         ticker.add((time) => {
             // THIS IS HE REAL GAME LOOP!!
@@ -129,32 +137,18 @@ export class Game {
         }
         this.fpsCounter = new PIXI.Text("No Text",{fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black'});
         this.fpsCounter.x = 920;
-            this.fpsCounter.y = 10;
+        this.fpsCounter.y = 10;
         this.stage.addChild(this.fpsCounter);
 
         this.initialized=true;
+        
         console.log("Initialized");
+        // Call this when you are ready for a running shared ticker.
+        ticker.start();
         this.registerCollisionObjects();
     }
 
-    update(progress:number) {
-        // Update the state of the world for the elapsed time since last render
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].update(progress);
-        }
-    }
-    preUpdate(progress:number) {
-        // Update the state of the world for the elapsed time since last render
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].preUpdate(progress);
-        }
-    }
-    postUpdate(progress:number) {
-        // Update the state of the world for the elapsed time since last render
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].postUpdate(progress);
-        }
-    }
+    
 
     startDraw() {
         requestAnimationFrame(()=>this.startDraw());
@@ -203,31 +197,9 @@ export class Game {
         this.CollisionSystem.update();
         this.handleCollisions();
 
+
         this.lastRender = timestamp
         //window.requestAnimationFrame((ts)=>{this.loop(ts)}); 
-    }
-
-    add(entity: Entity) {
-        entity.game = this;
-        entity.UniqueIdentifier =""+[0,1,2,3,4,5,6,7,8,9][Math.floor(Math.random() *10)]+
-                        [0,1,2,3,4,5,6,7,8,9][Math.floor(Math.random() *10)]+
-                        [0,1,2,3,4,5,6,7,8,9][Math.floor(Math.random() *10)]+
-                        [0,1,2,3,4,5,6,7,8,9][Math.floor(Math.random() *10)];
-        this.entities.push(entity);
-
-        if(this.initialized) entity.initialize();
-    }
-
-    getEntity<T extends Entity>(type:string) : T {
-        return <T>this.entities.find((e)=>e.Type==type);
-    }
-    getEntities<T extends Entity>(type:string) : T[] {
-        return <T[]>this.entities.filter((e)=>e.Type==type);
-    }
-
-    removeEntity(entity: Entity) {
-        entity.unload();
-        this.entities = this.entities.filter(e => e!=entity);
     }
 
     resizeCanvas() {

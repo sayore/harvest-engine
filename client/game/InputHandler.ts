@@ -1,9 +1,9 @@
-import { Entity } from "./entity";
+import { ClientEntity } from "./ClientEntity";
 
 /**
  * Streamline JavaScript Events so many Entities can listen to them and also unregister them at any time.
  */
-export class InputHandler extends Entity {
+export class InputHandler extends ClientEntity { 
     Type="InputHandler";
     PressedKeys: Set<string> = new Set();
     Events: Map<EventTypesAvailable, IndexableEventListener<any>> = new Map([

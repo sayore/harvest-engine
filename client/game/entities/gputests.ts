@@ -1,9 +1,9 @@
 import { Graphics, Text } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
-import { Vector } from "../../../lib/types/vector";
-import { Entity } from "../entity";
+import { Vector } from "../../../lib/types/Vector";
+import { ClientEntity } from "../ClientEntity";
 
-export class GPUTests extends Entity implements IDrawable {
+export class GPUTests extends ClientEntity implements IDrawable {
     Position: Vector;
     MyGraphics: Graphics;
     fpsCounter: Text;
@@ -12,7 +12,6 @@ export class GPUTests extends Entity implements IDrawable {
 
     initialize() {
         this.MyGraphics = new Graphics();
-        //this.MyGraphics.;
         this.fpsCounter = new Text("No Text");
         this.fpsCounter.x = 1000;
         this.fpsCounter.y = 50;
@@ -30,9 +29,7 @@ export class GPUTests extends Entity implements IDrawable {
         this.pauseCounter+=1;
         if(this.pauseCounter != 10) {
             this.fpsCounter.text = this.pauseCounter+" " + this.amount;
-            //return;
         } else {
-            //this.pauseCounter+=1;
             this.pauseCounter=0;
             this.fpsCounter.text = this.pauseCounter+" " + this.amount;
 
@@ -54,14 +51,5 @@ export class GPUTests extends Entity implements IDrawable {
 
             }   
         }
-    }
-
-    draw() {
-        /*this.game.context.fillStyle = "#BB2200";
-        this.game.context.fillRect(
-            this.Position.x + 0,
-            this.Position.y + 0,
-            50,
-            50);*/
     }
 }

@@ -1,16 +1,14 @@
 import { io, Socket } from "socket.io-client";
-import { Vector } from "../lib/types/vector";
+import { Vector } from "../lib/types/Vector";
 import { ABlock } from "./game/entities/ablock";
 import { ChunkHandler } from "./game/entities/chunkHandler";
 import { Mouse } from "./game/entities/mouse";
-//import { AdminGUI } from "./gui/admin";
 import { Player } from "./game/entities/player";
-//import { Chat } from "./wrappers/chat";
-import { Game } from "./game/game";
-import { InputHandler } from "./game/input";
+import { ClientGame } from "./game/ClientGame";
+import { InputHandler } from "./game/InputHandler";
 
 export let socket: Socket;
-export let game: Game;
+export let game: ClientGame;
 let latestTos=0;
 
 let agreed_tos = localStorage.getItem("tos_agreed");
@@ -29,8 +27,8 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
     });
 
 
-  let game = new Game();
-  //game.add(new Player());
+  let game = new ClientGame();
+  //game.add(new Player()); 
 
   game.add(new InputHandler());
   game.add(new ChunkHandler());
@@ -40,21 +38,11 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
   for (let i = 0; i < 100; i++) {
     //const element = array[i];
     let newBlock = new ABlock()
-      newBlock.Position=new Vector(Math.random()*1000,Math.random()*1000);
+      newBlock.Position=new Vector(Math.random()*2000-1000,Math.random()*2000-1000);
     game.add(newBlock);
   }
 
   game.start(socket);
-
-
-  //setInterval(()=>{
-  //  game.add(new ABlock([Math.random()*1000, Math.random()*500+100]));
-  //  game.add(new ABlock([Math.random()*1000, Math.random()*500+100]));
-  //},30)
-  //export let chat = new Chat();
-  //export let admingui = new AdminGUI();
-
-  //admingui.create();
 
   setInterval(()=>{
       console.log(socket.active)

@@ -1,11 +1,11 @@
 import { Socket } from "socket.io-client";
-import { Game } from "../game/game";
+import { ClientGame } from "../game/ClientGame";
 import { BasePacket } from "./base";
 
 export class PacketRegistry {
     public packetsRegistred : [name:string, packet:BasePacket][] = [];
     socket: Socket;
-    public game: Game;
+    public game: ClientGame;
 
     public register(name: string,packet : BasePacket) {
         console.log("Registred ",name," Packet", packet)

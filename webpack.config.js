@@ -1,6 +1,7 @@
 const path = require('path');
 
 var globalMode = 'development';
+//var globalMode = 'production';
 
 const clientConfig = {
   mode: globalMode,

@@ -1,21 +1,21 @@
-import { Socket } from "socket.io-client";
 import { RegisterPacket } from "../../packets/00_register";
 import { ChatResetPacket } from "../../packets/06b_reset";
 import { ChatPacket } from "../../packets/01_chat";
 import { PacketRegistry } from "../../packets/packet_registry";
 import { ChatBroadcastPacket } from "../../packets/01b_chatbroadcast";
-import { Entity } from "../entity";
+import { ClientEntity } from "../ClientEntity";
 import { IDrawable } from "../../../lib/interface/IDrawable";
 import { socket } from "../..";
 import { ICollisionable } from "../../../lib/interface/ICollisionable";
 import { Body, Circle, Polygon, Result } from "detect-collisions";
 import * as PIXI from 'pixi.js'
-import { Container, Graphics, RenderTexture, Sprite, TilingSprite } from "pixi.js";
-import { Vector } from "../../../lib/types/vector";
-import { EventTypesAvailable, InputHandler } from "../input";
-import { OwnerKnowingBody } from "../../../lib/types/ownerKnowingBody";
+import { Graphics, RenderTexture, Sprite, TilingSprite } from "pixi.js";
+import { Vector } from "../../../lib/types/Vector";
+import { EventTypesAvailable, InputHandler } from "../InputHandler";
+import { PlayerPosition } from "../../../lib/packets/PlayerPositionUpdate";
+import { MovePacket } from "../../packets/04b_move";
 
-export class Player extends Entity implements IDrawable, ICollisionable {
+export class Player extends ClientEntity implements IDrawable, ICollisionable {
     private packageRegistry: PacketRegistry;
     UniqueIdentifier: any;
 
@@ -32,18 +32,24 @@ export class Player extends Entity implements IDrawable, ICollisionable {
     myKeyDownEventId: number;
     myVisibilityChangedEventId: number;
 
-    constructor(
+    collided(result: Result): void {
+        if (result.b.owner.canMove()) {
+            this.Position.x -= result.overlap / 2 * result.overlap_x;
+            this.Position.y -= result.overlap / 2 * result.overlap_y;
 
-    ) {
-        super();
-        
-    }
-    collided(result:Result): void {
-        this.Position.x -= result.overlap/2 * result.overlap_x;
-		this.Position.y -= result.overlap/2 * result.overlap_y;
+            result.b.owner.x += result.overlap / 2 * result.overlap_x;
+            result.b.owner.y += result.overlap / 2 * result.overlap_y;
 
-        result.b.owner.x += result.overlap/2 * result.overlap_x;
-		result.b.owner.y += result.overlap/2 * result.overlap_y;
+            // Trying to fix some of the bouncyness
+            this.PhisicalVector.negate().sub(new Vector(result.overlap_x,result.overlap_y).mulNumber(0.7));
+        } else {
+            this.Position.x -= result.overlap * result.overlap_x;
+            this.Position.y -= result.overlap * result.overlap_y;
+
+            this.PhisicalVector.x=0;
+            this.PhisicalVector.y=0;
+        }
+        //this.game.handleCollisions();
     }
     getColliders(): Body[] {
         this.CollisionBox.x = this.Position.x;
@@ -64,6 +70,7 @@ export class Player extends Entity implements IDrawable, ICollisionable {
         this.packageRegistry.register("00", new RegisterPacket());
         this.packageRegistry.register("01", new ChatPacket());
         this.packageRegistry.register("01b", new ChatBroadcastPacket());
+        this.packageRegistry.register("04b", new MovePacket());
         this.packageRegistry.register("06b", new ChatResetPacket());
 
         this.packageRegistry.packetsRegistred.forEach(packet => {
@@ -189,21 +196,21 @@ export class Player extends Entity implements IDrawable, ICollisionable {
         });
     }
 
-    
 
-    LastCameraPositions : Vector[] = [];
-    MedianCameraPos = new Vector(0,0);
+
+    LastCameraPositions: Vector[] = [];
+    MedianCameraPos = new Vector(0, 0);
     PollingRate = 1000;
     PollingState = 0;
     update() {
+        this.PollingState++;
         let anypressed = false;
-        if (this.PressedKeys.has("Down")) { this.PhisicalVector.y += 23 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Up")) { this.PhisicalVector.y -= 23 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Left")) { this.PhisicalVector.x -= 25 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Right")) { this.PhisicalVector.x += 25 * Math.random(); anypressed = true; }
+        if (this.PressedKeys.has("Down")) { this.PhisicalVector.y += 11 * Math.random(); anypressed = true; }
+        if (this.PressedKeys.has("Up")) { this.PhisicalVector.y -= 11 * Math.random(); anypressed = true; }
+        if (this.PressedKeys.has("Left")) { this.PhisicalVector.x -= 14 * Math.random(); anypressed = true; }
+        if (this.PressedKeys.has("Right")) { this.PhisicalVector.x += 14 * Math.random(); anypressed = true; }
 
-        if(!document.hasFocus())
-        { 
+        if (!document.hasFocus()) {
             this.PressedKeys.clear();
             this.PhisicalVector.mulNumber(0.75);
         }
@@ -223,22 +230,23 @@ export class Player extends Entity implements IDrawable, ICollisionable {
 
 
         this.MyGraphics.setTransform(this.Position.x, this.Position.y)
-        
-        if(this.LastCameraPositions.length>20) this.LastCameraPositions.shift();
+
+        if (this.LastCameraPositions.length > 20) this.LastCameraPositions.shift();
         this.LastCameraPositions.push(new Vector(
             -this.Position.x + this.game.renderer.width / 2 - this.MySprite.width / 2,
             -this.Position.y + this.game.renderer.height / 2 - this.MySprite.height / 2
         ))
-        if(this.LastCameraPositions.length>2)
-        {this.MedianCameraPos = this.LastCameraPositions.reduce((a,b)=>{return a.add(b)});
-        this.game.stage.x = this.MedianCameraPos.x/this.LastCameraPositions.length;
-        this.game.stage.y = this.MedianCameraPos.y/this.LastCameraPositions.length;}
+        if (this.LastCameraPositions.length > 2) {
+            this.MedianCameraPos = this.LastCameraPositions.reduce((a, b) => { return a.add(b) });
+            this.game.stage.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
+            this.game.stage.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
+            this.game.map.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
+            this.game.map.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
+        }
 
         //if(this.Position.x<=0) this.remove();
-    }
 
-    draw() {
-
+        if (this.PollingState % 10) this.game.socket.emit("04", new PlayerPosition(this.Position.clone()))
     }
 
     unload() {

@@ -1,9 +1,9 @@
 import { Graphics, InteractionEvent, InteractivePointerEvent, Renderer, Text } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
-import { Vector } from "../../../lib/types/vector";
-import { Entity } from "../entity";
+import { Vector } from "../../../lib/types/Vector";
+import { ClientEntity } from "../ClientEntity";
 
-export class Mouse extends Entity implements IDrawable {
+export class Mouse extends ClientEntity implements IDrawable {
     MyGraphics:Graphics;
     tilePos: Text;
     Position: Vector=<Vector>{x:0,y:0};
@@ -47,14 +47,5 @@ export class Mouse extends Entity implements IDrawable {
     private amount=1;
     postUpdate() {
         this.tilePos.text=""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64);
-    }
-
-    draw() {
-        /*this.game.context.fillStyle = "#BB2200";
-        this.game.context.fillRect(
-            this.Position.x + 0,
-            this.Position.y + 0,
-            50,
-            50);*/
     }
 }

@@ -1,9 +1,9 @@
 import { Graphics, TilingSprite } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
-import { Vector } from "../../../lib/types/vector";
-import { Entity } from "../entity";
+import { Vector } from "../../../lib/types/Vector";
+import { ClientEntity } from "../ClientEntity";
 
-export class Tileeditor extends Entity implements IDrawable {
+export class Tileeditor extends ClientEntity implements IDrawable {
     Position: Vector;
     MyGraphics:Graphics;
     
@@ -20,14 +20,5 @@ export class Tileeditor extends Entity implements IDrawable {
         this.MyGraphics.x+=Math.random()*this.amount-this.amount+2;
         this.MyGraphics.y+=Math.random()*this.amount-this.amount+2;
         this.amount*=1.01;
-    }
-
-    draw() {
-        /*this.game.context.fillStyle = "#BB2200";
-        this.game.context.fillRect(
-            this.Position[0] + 0,
-            this.Position[1] + 0,
-            50,
-            50);*/
     }
 }

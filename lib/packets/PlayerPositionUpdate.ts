@@ -1,8 +1,15 @@
-export class PlayerPositionUpdate {
+import { Vector } from "../types/Vector";
+
+export class PlayerPositions {
+    Type="PlayerPositions";
     public players: Map<string,PlayerPosition>
 
 }
 
 export class PlayerPosition {
-    Position: [x: number, y: number];
+    Type="PlayerPosition";
+    constructor(
+        public Position: Vector) {
+
+    }
 }
