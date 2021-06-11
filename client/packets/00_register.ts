@@ -8,9 +8,9 @@ export class RegisterPacket extends BasePacket {
         //console.log(this);
 
         if(!!args.uni) {
-            this.game.entities.find(m=>m.Type=="Player").uuid= args.uuid;
-            console.log("Players uuid has been set to: "+args.uuid);
-            localStorage.setItem('uuid',args.uni);
+            //this.game.entities.find(m=>m.Type=="Player").uuid= args.uuid;
+            //console.log("Players uuid has been set to: "+args.uuid);
+            //localStorage.setItem('uuid',args.uni);
         }
     }
 }

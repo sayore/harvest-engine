@@ -10,26 +10,28 @@ export class PlayerExternal extends ClientEntity implements IDrawable{
     Type="PlayerExternal";
     MyGraphics: Graphics;
     public players: Map<string,PlayerExternal> = new Map();
-
+    Position = new Vector(9999999999, 9999999999);
 
     constructor(
-        
+        uuid: string
     ) {
         super();
-
-        setInterval(()=>{
-            this.game.socket.emit("07",()=>{
-                
-            })
-        },500)
+        this.uuid=uuid;
+        console.log("Player "+ uuid+" has been created.")
+        //setInterval(()=>{
+        //    this.game.socket.emit("07",()=>{
+        //        
+        //    })
+        //},500)
     }
-    Position: Vector;
 
     initialize() {
         this.MyGraphics = new Graphics();
         this.MySprite = new TilingSprite(this.game.loader.resources["player"].texture, 64, 64);
         this.MySprite.tilePosition.x = 0
         this.MyGraphics.addChild(this.MySprite);
+
+        this.game.stage.addChild(this.MyGraphics); 
     }
 
     update() {

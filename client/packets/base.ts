@@ -5,6 +5,7 @@ import { ClientGame } from "../game/ClientGame";
 export class BasePacket {
     public socket : Socket;
     public game: ClientGame;
+    
     handle(obj:any) {
 
     }

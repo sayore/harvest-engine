@@ -9,6 +9,7 @@ export class PlayerPositions {
 export class PlayerPosition {
     Type="PlayerPosition";
     constructor(
+        public UUID:string=undefined,
         public Position: Vector) {
 
     }

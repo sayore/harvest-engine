@@ -17,15 +17,15 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
   console.log("Game Server.. ")
   //export let socket = io("https://sayore.de/",{
 
-
+  let requestKey = <string>localStorage.getItem('uuid');
   socket = io("https://sayore.de/",{
       secure: true,
       query: {
         x: "42",
-        requestedUUID: <string>localStorage.getItem('uuid') || undefined
+        requestedUUID: (requestKey!=null?requestKey:undefined)
       }
     });
-
+console.log("Requested UUID: "+localStorage.getItem('uuid'))
 
   let game = new ClientGame();
   //game.add(new Player()); 
@@ -45,7 +45,7 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
   game.start(socket);
 
   setInterval(()=>{
-      console.log(socket.active)
+      //console.log(socket.active)
   },1000) 
 
 }else {

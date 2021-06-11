@@ -13,3 +13,4 @@ export class VisibleChunk extends ClientEntity implements IChunk  {
         this.game.socket.emit("07",{X:this.Position.x,Y:this.Position.y})
     }
 }
+ 

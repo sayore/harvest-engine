@@ -3,7 +3,6 @@ import { ClientGame } from "./ClientGame";
 
 export class ClientEntity extends CommonEntity {
     game:ClientGame;
-    UniqueIdentifier: string;
     Type:string="NoTypeEntity";
     uuid: string;
 

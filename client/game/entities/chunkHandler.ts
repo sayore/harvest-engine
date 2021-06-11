@@ -85,7 +85,7 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
     }
 
     addChunk(pos:{x:number,y:number}) {
-        console.log("Loaded chunk "+pos.x+" "+pos.y)
+        //console.log("Loaded chunk "+pos.x+" "+pos.y)
         var drawnEmptyChunk = new Sprite(this.emptyChunkTexture);
         drawnEmptyChunk.setTransform(pos.x*this.game.coreChunkSizeInPixels.x,pos.y*this.game.coreChunkSizeInPixels.y);
         this.game.map.addChild(drawnEmptyChunk);
@@ -97,8 +97,8 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
         var topLeft = this.player.Position.clone().subNumber(1000).div(this.game.coreChunkSizeInPixels).floor();
         var bottomRight = this.player.Position.clone().addNumber(1000).div(this.game.coreChunkSizeInPixels).ceil();
         
-        console.log(topLeft);
-        console.log(bottomRight);
+        //console.log(topLeft);
+        //console.log(bottomRight);
         //var chunkPositive = [];
 
         for (let i = topLeft.x; i < bottomRight.x; i++) {

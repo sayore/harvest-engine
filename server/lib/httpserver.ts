@@ -50,13 +50,14 @@ export class eHTTPServer {
             
             // Client tells us he already has an UUID
             if(socket.handshake.query.requestedUUID!="undefined"){
-                console.log(socket.handshake.query.requestedUUID); // prints { x: "42", EIO: "4", transport: "polling" }
+                console.log("Player rejoined! ("+socket.handshake.query.requestedUUID+")");
                 // Check if uuid is in db
                 //permanentDatabase.prepare("SELECT * FROM players");
                 
                 // Create Player 
+                this.game.add(new Player(<string>socket.handshake.query.requestedUUID, socket));
             } else { // User has not send an UUID with it's request.
-
+                console.log("Player joined!")
                 var playersUUID = cuid()
                 this.game.add(new Player(cuid(), socket));
             }

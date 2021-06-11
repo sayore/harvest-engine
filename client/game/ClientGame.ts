@@ -19,7 +19,7 @@ export class ClientGame extends CommonGame {
     
     //SYSTEMS
     CollisionSystem = new Collisions();
-    UniqueIdentifier: any;
+    UniqueIdentifier: string;
     context: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement
     renderer:AbstractRenderer;
@@ -142,7 +142,7 @@ export class ClientGame extends CommonGame {
 
         this.initialized=true;
         
-        console.log("Initialized");
+        console.log("Initialized Entities and Scene");
         // Call this when you are ready for a running shared ticker.
         ticker.start();
         this.registerCollisionObjects();

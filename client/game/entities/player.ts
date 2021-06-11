@@ -14,6 +14,7 @@ import { Vector } from "../../../lib/types/Vector";
 import { EventTypesAvailable, InputHandler } from "../InputHandler";
 import { PlayerPosition } from "../../../lib/packets/PlayerPositionUpdate";
 import { MovePacket } from "../../packets/04b_move";
+import { UUIDPacket } from "../../packets/08_uuid";
 
 export class Player extends ClientEntity implements IDrawable, ICollisionable {
     private packageRegistry: PacketRegistry;
@@ -72,9 +73,10 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
         this.packageRegistry.register("01b", new ChatBroadcastPacket());
         this.packageRegistry.register("04b", new MovePacket());
         this.packageRegistry.register("06b", new ChatResetPacket());
+        this.packageRegistry.register("08", new UUIDPacket());
 
         this.packageRegistry.packetsRegistred.forEach(packet => {
-            this.game.socket.on(packet[0], (args) => { console.log("REIC " + packet[0]); packet[1].handle(args); });
+            this.game.socket.on(packet[0], (args) => { /*console.log("REIC " + packet[0]);*/ packet[1].handle(args); });
         });
         setTimeout(() => {
             this.game.socket.emit("00");
@@ -200,7 +202,7 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
 
     LastCameraPositions: Vector[] = [];
     MedianCameraPos = new Vector(0, 0);
-    PollingRate = 1000;
+    PollingRate = 5;
     PollingState = 0;
     update() {
         this.PollingState++;
@@ -223,9 +225,17 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
 
 
         this.PollingState++;
-        if (this.PollingState == this.PollingRate) {
-            this.PollingState = 0;
-            socket.emit("04", { uuid: this.UniqueIdentifier, position: this.Position })
+        if (this.PollingState % this.PollingRate==0) {
+            //socket.emit("04", { uuid: this.UniqueIdentifier, position: this.Position })
+            if(localStorage.getItem('uuid')!=undefined) {
+                this.game.socket.emit("04", new PlayerPosition(localStorage.getItem('uuid'), this.Position.clone()))
+            }
+            else {
+                // Re  request the UUID in case uuid packet was too slow.
+                this.game.socket.emit("08")
+                
+            }
+            
         }
 
 
@@ -243,10 +253,6 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
             this.game.map.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
             this.game.map.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
         }
-
-        //if(this.Position.x<=0) this.remove();
-
-        if (this.PollingState % 10) this.game.socket.emit("04", new PlayerPosition(this.Position.clone()))
     }
 
     unload() {
