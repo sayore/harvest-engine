@@ -14,6 +14,14 @@ var options = {
     ca: fs.readFileSync('/etc/letsencrypt/live/sayore.de/chain.pem', 'utf8')
 };
 
+var version = 1;
+var versionFilePath=path.join(__dirname, '../version');
+if(fs.existsSync(versionFilePath)) {
+    version = Number(fs.readFileSync(versionFilePath, 'utf8'));
+    version++;
+    fs.writeFileSync(versionFilePath, version+"", 'utf8')
+} else { fs.writeFileSync(versionFilePath, version+"", 'utf8') }
+
 const app = express();
 const https = require('https');
 const server = https.createServer(options,app);
@@ -22,6 +30,7 @@ const io = new Server(server,{
     cookie:true,
     serveClient:true
 });
+app.set('view engine', 'ejs');
 
 export class eHTTPServer {
     static io: Server;
@@ -30,7 +39,7 @@ export class eHTTPServer {
     static start() {
 
         app.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, '../index.html'));
+            res.render(path.join(__dirname, '../index.ejs'),{version});
         });
 
         app.use((req, res, next)=>{
@@ -40,6 +49,7 @@ export class eHTTPServer {
         app.use("/sprite",express.static(path.join(__dirname, '../assets')));
 
         console.log(typeof(permanentDatabase));
+        
         //var prepStatement = permanentDatabase.prepare("SELECT * FROM players");
 
         //console.log(prepStatement.get({}));

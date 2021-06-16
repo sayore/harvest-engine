@@ -7,6 +7,7 @@ import * as PIXI from 'pixi.js'
 import { AbstractRenderer, Container, Loader, Resource, Text, TextStyle } from "pixi.js";
 import { Vector } from "../../lib/types/Vector";
 import { CommonGame } from "../../lib/CommonGame";
+import { Entity } from "../../server/game/entity";
 
 export class ClientGame extends CommonGame {
     
@@ -35,7 +36,7 @@ export class ClientGame extends CommonGame {
     gameWidth: number;
     gameHeight: number;
     globalOffset: [x: number, y: number] = [0, 0];
-    fpsCounter:Text;
+    
     loader = Loader.shared;
     resources = Loader.shared.resources;
     fpsMedian:number[] = [];
@@ -102,11 +103,11 @@ export class ClientGame extends CommonGame {
         },1000/60)
         let ticker = PIXI.Ticker.shared;
         ticker.stop();
-        ticker.speed=3;
-        ticker.maxFPS=0;
+        //ticker.speed=3;
+        //ticker.maxFPS=0;
         // Set this to prevent starting this ticker when listeners are added.
         // By default this is true only for the PIXI.Ticker.shared instance.
-        ticker.autoStart = false;
+        //ticker.autoStart = false;
         // FYI, call this to ensure the ticker is stopped. It should be stopped
         // if you have not attempted to render anything yet.
         
@@ -116,17 +117,12 @@ export class ClientGame extends CommonGame {
             // THIS IS HE REAL GAME LOOP!!
             // LOOK HERE
             this.fpsMedian.push(ticker.FPS);
-            if(this.fpsMedian.length>100)
+            if(this.fpsMedian.length>50)
             this.fpsMedian.shift();
 
-            
-            this.fpsCounter.text = (this.fpsMedian.reduce((a,y)=>(a+y))/this.fpsMedian.length).toPrecision(4) + "("+this.fpsMedian.length+")\n"+this.entities.length;
-            this.fpsCounter.x = -this.stage.x+550;
-            this.fpsCounter.y = -this.stage.y+20;
-
             // Lock GUI to Stage(camera)
-            this.gui.x = 0;
-            this.gui.y = 0;
+            //this.gui.x = 0;
+            //this.gui.y = 0;
             
             this.renderer.render(this.baseContainer); 
         });
@@ -135,14 +131,12 @@ export class ClientGame extends CommonGame {
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].initialize();
         }
-        this.fpsCounter = new PIXI.Text("No Text",{fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black'});
-        this.fpsCounter.x = 920;
-        this.fpsCounter.y = 10;
-        this.stage.addChild(this.fpsCounter);
+        
 
         this.initialized=true;
         
         console.log("Initialized Entities and Scene");
+
         // Call this when you are ready for a running shared ticker.
         ticker.start();
         this.registerCollisionObjects();
@@ -156,7 +150,7 @@ export class ClientGame extends CommonGame {
         this.renderer.render(this.stage);
     }
 
-    movableEntities : (ICollisionable)[] = [];
+    
     registerCollisionObjects() {
         // Draw the state of the world
         for (let i = 0; i < this.entities.length; i++) {

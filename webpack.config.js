@@ -30,6 +30,33 @@ const clientConfig = {
   }
 };
 
+const libtestConfig = {
+  mode: globalMode,
+  entry: './lib/test.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+    
+  },
+  output: {
+    filename: 'test.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  externals: {
+    //"detect-collisions":"detect-collisions",
+    "socket.io-client":"io",
+    "pixi.js":"PIXI" // WORKS DONT CHANGE
+  }
+};
+
 
 const serverConfig = {
   mode: globalMode,
@@ -63,4 +90,4 @@ const serverConfig = {
 };
 
 
-module.exports = [clientConfig, serverConfig]
+module.exports = [clientConfig, libtestConfig, serverConfig]

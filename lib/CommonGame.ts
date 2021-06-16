@@ -1,14 +1,19 @@
 import { CommonEntity } from "./CommonEntity";
+import { ICollisionable } from "./interface/ICollisionable";
 import { ITypeable } from "./interface/ITypeable";
+import { TypeCheck } from "./typeCheck";
 
 export class CommonGame implements ITypeable{
     Type: string="CommonGame";
     initialized: boolean;
     public entities: CommonEntity[] = [];
+    movableEntities : (ICollisionable)[] = [];
+
     add(entity: CommonEntity) {
         entity.game = this;
         this.entities.push(entity);
 
+        if(TypeCheck.isCollidable(entity)) this.movableEntities.push(entity);
         if(this.initialized) entity.initialize();
     }
 

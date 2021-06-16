@@ -7,14 +7,16 @@ import { BasePacket } from "./base";
 export class MovePacket extends BasePacket{
     // Will be received on every message send into chat!
     handle(playerpositions:PlayerPosition[]) {
-        playerpositions.forEach((pp:any)=>{
+        playerpositions.forEach((pp:PlayerPosition)=>{
+            if(pp.UUID == localStorage.getItem("uuid")) return;
             let entity = <PlayerExternal>this.game.entities.find(ent=>{return (ent.uuid==pp.UUID && ent.Type=="PlayerExternal")});
+            
             //console.log(entity);
             
             if(entity) {
                 //console.log("Entity Exists! ", entity)
-                entity.Position.x=pp.Position.x
-                entity.Position.y=pp.Position.y;
+                entity.targetPosition.x=pp.Position.x
+                entity.targetPosition.y=pp.Position.y;
             } else {
                 console.log("Entity does not Exists! ", entity , pp)
                 this.game.add(new PlayerExternal(pp.UUID))

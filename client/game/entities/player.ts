@@ -15,6 +15,8 @@ import { EventTypesAvailable, InputHandler } from "../InputHandler";
 import { PlayerPosition } from "../../../lib/packets/PlayerPositionUpdate";
 import { MovePacket } from "../../packets/04b_move";
 import { UUIDPacket } from "../../packets/08_uuid";
+import { ChunkCallBackPaket as ChunkCallbackPaket } from "../../packets/09cb_chunk";
+import { ConsolePaket } from "../../packets/10_console";
 
 export class Player extends ClientEntity implements IDrawable, ICollisionable {
     private packageRegistry: PacketRegistry;
@@ -74,6 +76,8 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
         this.packageRegistry.register("04b", new MovePacket());
         this.packageRegistry.register("06b", new ChatResetPacket());
         this.packageRegistry.register("08", new UUIDPacket());
+        this.packageRegistry.register("09cb", new ChunkCallbackPaket());
+        this.packageRegistry.register("10", new ConsolePaket());
 
         this.packageRegistry.packetsRegistred.forEach(packet => {
             this.game.socket.on(packet[0], (args) => { /*console.log("REIC " + packet[0]);*/ packet[1].handle(args); });
@@ -154,7 +158,7 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
             if (event.defaultPrevented) {
                 return; // Do nothing if the event was already processed
             }
-            console.log(event.key);
+            //console.log(event.key);
             switch (event.key) {
                 case "Down": // IE/Edge specific value
                 case "ArrowDown":
@@ -231,9 +235,8 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
                 this.game.socket.emit("04", new PlayerPosition(localStorage.getItem('uuid'), this.Position.clone()))
             }
             else {
-                // Re  request the UUID in case uuid packet was too slow.
+                // Rerequest the UUID in case uuid packet was too slow.
                 this.game.socket.emit("08")
-                
             }
             
         }

@@ -1,5 +1,8 @@
 import { ContentType, eTile } from "./tile";
 
+/**
+ * @deprecated
+ */
 export class eMap {
     constructor(
         public Tiles:eTile[],

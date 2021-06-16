@@ -1,5 +1,6 @@
 import { Graphics, ObservablePoint, RenderTexture, Sprite, Text, TilingSprite } from "pixi.js";
 import { IDrawable } from "../../../lib/interface/IDrawable";
+import { ChunkRequest } from "../../../lib/packets/ChunkRequest";
 import { Vector } from "../../../lib/types/Vector";
 import { ClientEntity } from "../ClientEntity";
 import { VisibleChunk } from "./map/visibleChunk";
@@ -7,6 +8,7 @@ import { Player } from "./player";
 
 
 export class ChunkHandler extends ClientEntity implements IDrawable {
+    Type="ChunkHandler";
     MyGraphics: Graphics;
     fpsCounter: Text;
     drawnChunks: Map<string, VisibleChunk>;
@@ -66,7 +68,7 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
                     break;
                 case 100:
                     // V1 Get x
-                    if (this.getChunkPosFromIdMode == 100 && "1234567890.".indexOf(character) !== -1) { xpos += character; }
+                    if (this.getChunkPosFromIdMode == 100 && "1234567890.-".indexOf(character) !== -1) { xpos += character; }
                     else {
                         if (character != 'y') {
                             console.error("Error Parsing Chunk Position, y didn't follow after x position."); return;
@@ -77,40 +79,80 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
                     break;
                 case 101:
                     // V1 Get y
-                    if ("1234567890.".indexOf(character) !== -1) { ypos += character; } else { console.error("After the y coordinate there was too much data."); return; }
+                    if ("1234567890.-".indexOf(character) !== -1) { ypos += character; } else { console.error("After the y coordinate there was too much data."); return; }
                     break;
             }
         }
         return new Vector(Number(xpos), Number(ypos));
     }
 
-    addChunk(pos:{x:number,y:number}) {
+    addChunk(pos:Vector) {
         //console.log("Loaded chunk "+pos.x+" "+pos.y)
+        
+        // Get Chunk from Server - - -
         var drawnEmptyChunk = new Sprite(this.emptyChunkTexture);
-        drawnEmptyChunk.setTransform(pos.x*this.game.coreChunkSizeInPixels.x,pos.y*this.game.coreChunkSizeInPixels.y);
-        this.game.map.addChild(drawnEmptyChunk);
-        this.lastChunkPositive.push({x:pos.x,y:pos.y});
-    }
 
-    lastChunkPositive:object[] = [];
+        this.loadedChunkTextures.set(this.getChunkId(pos),drawnEmptyChunk);
+        this.game.socket.emit("09",new ChunkRequest(pos));
+
+        var posToDraw = Vector.mul(pos,this.game.coreChunkSizeInPixels);
+        drawnEmptyChunk.setTransform(posToDraw.x,posToDraw.y);
+        this.game.map.addChild(drawnEmptyChunk);
+        this.lastChunkPositive.push([this.getChunkId(pos),drawnEmptyChunk,pos]);
+    }
+    removeChunk(chunk:[string, Sprite, Vector]) {
+        //console.log("Remove "+chunk[0]);
+        this.game.map.removeChild(chunk[1]);
+        this.lastChunkPositive = this.lastChunkPositive.filter(lcp => lcp[0]!=chunk[0]);
+    }
+    loadChunkFromServer() {
+
+    }
+    
+    loadedChunkTextures:Map<string, Sprite> = new Map();
+    lastChunkPositive:[string, Sprite, Vector][] = [];
     visibleChunkCheck() {
         var topLeft = this.player.Position.clone().subNumber(1000).div(this.game.coreChunkSizeInPixels).floor();
         var bottomRight = this.player.Position.clone().addNumber(1000).div(this.game.coreChunkSizeInPixels).ceil();
-        
-        //console.log(topLeft);
-        //console.log(bottomRight);
-        //var chunkPositive = [];
+        var foundIds:Set<string> = new Set();
 
         for (let i = topLeft.x; i < bottomRight.x; i++) {
             for (let j = topLeft.y; j < bottomRight.y; j++) {
-                //console.log(this.lastChunkPositive.findIndex((pos:{x:number,y:number})=>{return (pos.x==i && pos.y==j)}));
-                if(this.lastChunkPositive.findIndex(function(pos:{x:number,y:number}){return (pos.x==i && pos.y==j)}) == -1) {
-
-                    this.addChunk({x:i,y:j});
+                if(this.lastChunkPositive.findIndex(function(chunk){return (chunk[2].x==i && chunk[2].y==j)}) == -1) {
+                    this.addChunk(new Vector(i,j));
                 }
+                foundIds.add(this.getChunkId(new Vector(i,j)))
             }
         }
-        
-        //console.log(chunkPositive);
+
+        this.removeChunkWhichAreOutOfVisRange(foundIds);
+        this.removeChunkWhichAreOutOfVisRange(foundIds);
+
+        if(this.lastChunkPositive.length>=25) {
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+        }
+        if(this.lastChunkPositive.length>=50) {
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+        }
+        if(this.lastChunkPositive.length>=100) {
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+        }
+        if(this.lastChunkPositive.length>=200) {
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+        }
+        console.log("Visible&Loaded Chunks: "+this.lastChunkPositive.length);
+    }
+
+    removeChunkWhichAreOutOfVisRange(visibleIds: Set<string>) {
+        var checkId = Math.floor(Math.random()*this.lastChunkPositive.length);
+        if(!visibleIds.has(this.lastChunkPositive[checkId][0])) {
+            this.removeChunk(this.lastChunkPositive[checkId]);
+            //console.log(checkId,visibleIds);
+        }
     }
 }

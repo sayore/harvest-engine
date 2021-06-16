@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export class eTile {
     public Text:string = "<span>0</span>";
     public Sprite:ImageBitmap|string;

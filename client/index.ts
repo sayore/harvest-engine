@@ -6,6 +6,7 @@ import { Mouse } from "./game/entities/mouse";
 import { Player } from "./game/entities/player";
 import { ClientGame } from "./game/ClientGame";
 import { InputHandler } from "./game/InputHandler";
+import { FPSCounterEntity } from "./game/entities/fpscounter";
 
 export let socket: Socket;
 export let game: ClientGame;
@@ -26,10 +27,11 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
       }
     });
 console.log("Requested UUID: "+localStorage.getItem('uuid'))
-
-  let game = new ClientGame();
+ 
+  game = new ClientGame();
   //game.add(new Player()); 
 
+  game.add(new FPSCounterEntity());
   game.add(new InputHandler());
   game.add(new ChunkHandler());
   game.add(new Mouse());

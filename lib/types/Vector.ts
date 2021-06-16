@@ -1,14 +1,14 @@
-export class Vector {
-    negate() : Vector {
-        this.x=-this.x;
-        this.y=-this.y;
+    export class Vector {
+    negate(): Vector {
+        this.x = -this.x;
+        this.y = -this.y;
         return this;
     }
 
     constructor(
         public x: number = 0,
         public y: number) {
-        if(x!=0 && y==undefined) this.y=x;
+        if (x != 0 && y == undefined) this.y = x;
     }
 
     private static _Zero: Vector = new Vector(0, 0);
@@ -35,6 +35,14 @@ export class Vector {
     static mulNumber(a: Vector, b: number): Vector { return new Vector(a.x * b, a.y * b); }
     static divNumber(a: Vector, b: number): Vector { return new Vector(a.x / b, a.y / b); }
     static modNumber(a: Vector, b: number): Vector { return new Vector(a.x % b, a.y % b); }
+    static atan2(a: Vector): number { return Math.atan2(a.y, a.x); }
+    /**
+     * Returns radian Direction from a to b.
+     * @param a 
+     * @param b 
+     * @returns 
+     */
+    static direction(a: Vector, b: Vector): number { return Math.atan2(b.y - a.y, b.x - a.x); }
 
 
     /**
@@ -96,6 +104,40 @@ export class Vector {
     }
 
     /**
+     * Returns the radian direction from this to target Vector..
+     * @param target Vector to look at.
+     * @returns 
+     */
+    directionTo(target: Vector) {
+        return Math.atan2(target.y - this.y, target.x - this.x);
+    };
+    /**
+     * Returns the radian direction from this to target Vector..
+     * @param target Vector to look at.
+     * @returns 
+     */
+    directionToDeg(target: Vector) {
+        return (Math.atan2(target.y - this.y, target.x - this.x) / (Math.PI * 2)) * 360;
+    };
+
+    static eigthOfPiRadian: Vector = new Vector(Math.sin(Math.PI / 8), Math.cos(Math.PI / 8))
+
+    /**
+     * Vector will be rotated 45 degree to the right.
+     * @param a the Vector
+     */
+    static rotateByEightOfPi(a: Vector): Vector {
+        return a.mul(this.eigthOfPiRadian);
+    }
+
+    /**
+     * Faster Direction calulcation for UpLeft, UpRight, DownUp and DownRight approximation. (rotate by45deg, to instead get 4D L,R,U,D)
+     */
+    directionTo4D() {
+        return new Vector((this.x == 0 ? 0 : (this.x < 0 ? 1 : -1)), (this.y == 0 ? 0 : (this.y < 0 ? 1 : -1)));
+    }
+
+    /**
      * Calculates the distance(1d) to the other Vector.
      * @param target Vector to look at.
      * @returns 
@@ -110,9 +152,9 @@ export class Vector {
      * @param target Vector to look at.
      * @returns 
      */
-    round() : Vector {
-        this.x=Math.round(this.x);
-        this.y=Math.round(this.y);
+    round(): Vector {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
         return this;
     };
     /**
@@ -120,9 +162,9 @@ export class Vector {
      * @param target Vector to look at.
      * @returns 
      */
-    floor() : Vector {
-        this.x=Math.floor(this.x);
-        this.y=Math.floor(this.y);
+    floor(): Vector {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
         return this;
     };
     /**
@@ -130,9 +172,9 @@ export class Vector {
      * @param target Vector to look at.
      * @returns 
      */
-    ceil() : Vector {
-        this.x=Math.ceil(this.x);
-        this.y=Math.ceil(this.y);
+    ceil(): Vector {
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
         return this;
     };
     /**
@@ -153,5 +195,26 @@ export class Vector {
      */
     clone(): Vector {
         return new Vector(this.x, this.y);
+    }
+
+    /**
+     * Serializes a Vector(which needs to be Int!!), into a 2 character wide String. 
+     * Maximum size of an serialized Vector in this format is 65535.
+     * Everything larger will result in undefined behaviour.
+     * @returns 
+     */
+    serializeInto2char() : string {
+        return String.fromCharCode(this.x)+String.fromCharCode(this.y);
+    }
+
+    deserializeFrom2char(data:string) {
+        this.x = data.charCodeAt(0);
+        this.y = data.charCodeAt(1);
+    }
+
+    static deserializeFrom2char(data:string) : Vector {
+        let retVec = new Vector(0,0);
+        retVec.deserializeFrom2char(data);
+        return retVec;
     }
 }

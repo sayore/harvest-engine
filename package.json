@@ -4,6 +4,7 @@
     "better-sqlite3": "^7.4.0",
     "cuid": "^2.1.8",
     "detect-collisions": "^2.5.4",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "nodemon": "^2.0.7",
     "pixi.js": "^6.0.4",
