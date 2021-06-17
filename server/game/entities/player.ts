@@ -37,7 +37,7 @@ export class Player extends Entity{
 
         setTimeout(()=>{
             socket.emit("08",uuid);
-            socket.emit("10",Buffer.from("Hello"));
+            //socket.emit("10",Buffer.from("Hello"));
         },2000)
     }
 

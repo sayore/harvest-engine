@@ -6,25 +6,25 @@ import { ChunkHandler } from "../game/entities/chunkHandler";
 import { BasePacket } from "./base";
 
 export class ChunkCallBackPaket extends BasePacket{
-    handle(chunk:string) {
-        console.log(Chunk.deserialize(chunk));
+    handle(chunkStr:string) {
+        let chunk=Chunk.deserialize(chunkStr);
 
         let MyGraphics = new Graphics();
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-
-                var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture, 64, 64);
-                ts.tilePosition.x = -64;
-                ts.tilePosition.y = -64;
-                ts.y = 64 * i;
-                ts.x = 64 * j;
-                MyGraphics.addChild(ts);
-            }
+        for (let i = 0; i < chunk.data.length; i++) {
+            var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture, 64, 64);
+            ts.tilePosition.x = chunk.data[i].TileInTileset.x*-64;
+            ts.tilePosition.y = chunk.data[i].TileInTileset.y*-64;
+            ts.x = (i%8)*64;
+            ts.y = Math.floor(i/8)*64;
+            MyGraphics.addChild(ts);
         }
         //console.log(game);
         let renderedChunk = game.renderer.generateTexture(MyGraphics)
 
         let chunkHandler = game.getEntity<ChunkHandler>("ChunkHandler");
+        chunkHandler.removeChunkViaId( chunkHandler.getChunkId(chunk.globalPosition) );
+        console.log("Removed "+chunkHandler.getChunkId(chunk.globalPosition))
+        chunkHandler.addChunk( chunk.globalPosition, renderedChunk );
     }
     send(socket: Socket,message:string) {
 

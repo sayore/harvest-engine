@@ -86,24 +86,34 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
         return new Vector(Number(xpos), Number(ypos));
     }
 
-    addChunk(pos:Vector) {
+    addChunk(pos:Vector, texture: RenderTexture = this.emptyChunkTexture) {
+        if(texture==this.emptyChunkTexture)
+        this.game.socket.emit("09",new ChunkRequest(pos));
         //console.log("Loaded chunk "+pos.x+" "+pos.y)
         
         // Get Chunk from Server - - -
-        var drawnEmptyChunk = new Sprite(this.emptyChunkTexture);
+        var chunkSprite = new Sprite(texture);
 
-        this.loadedChunkTextures.set(this.getChunkId(pos),drawnEmptyChunk);
-        this.game.socket.emit("09",new ChunkRequest(pos));
+        this.loadedChunkTextures.set(this.getChunkId(pos),chunkSprite);
 
         var posToDraw = Vector.mul(pos,this.game.coreChunkSizeInPixels);
-        drawnEmptyChunk.setTransform(posToDraw.x,posToDraw.y);
-        this.game.map.addChild(drawnEmptyChunk);
-        this.lastChunkPositive.push([this.getChunkId(pos),drawnEmptyChunk,pos]);
+        chunkSprite.setTransform(posToDraw.x,posToDraw.y);
+        this.game.map.addChild(chunkSprite);
+        this.lastChunkPositive.push([this.getChunkId(pos),chunkSprite,pos]);
     }
     removeChunk(chunk:[string, Sprite, Vector]) {
         //console.log("Remove "+chunk[0]);
         this.game.map.removeChild(chunk[1]);
         this.lastChunkPositive = this.lastChunkPositive.filter(lcp => lcp[0]!=chunk[0]);
+    }
+    removeChunkViaId(chunkId:string) : boolean {
+        //console.log("Remove "+chunk[0]);
+        let find = this.lastChunkPositive.find(lcp => lcp[0]!=chunkId)
+        if(!find) return false;
+
+        this.game.map.removeChild(find[1]);
+        this.lastChunkPositive = this.lastChunkPositive.filter(lcp => lcp[0]!=chunkId);
+        return true;
     }
     loadChunkFromServer() {
 
@@ -112,8 +122,8 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
     loadedChunkTextures:Map<string, Sprite> = new Map();
     lastChunkPositive:[string, Sprite, Vector][] = [];
     visibleChunkCheck() {
-        var topLeft = this.player.Position.clone().subNumber(1000).div(this.game.coreChunkSizeInPixels).floor();
-        var bottomRight = this.player.Position.clone().addNumber(1000).div(this.game.coreChunkSizeInPixels).ceil();
+        var topLeft = this.player.Position.clone().subNumber(this.game.gameWidth+400).div(this.game.coreChunkSizeInPixels).floor();
+        var bottomRight = this.player.Position.clone().addNumber(this.game.gameWidth+400).div(this.game.coreChunkSizeInPixels).ceil();
         var foundIds:Set<string> = new Set();
 
         for (let i = topLeft.x; i < bottomRight.x; i++) {
@@ -130,12 +140,16 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
 
         if(this.lastChunkPositive.length>=25) {
             this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
         }
         if(this.lastChunkPositive.length>=50) {
             this.removeChunkWhichAreOutOfVisRange(foundIds);
             this.removeChunkWhichAreOutOfVisRange(foundIds);
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
         }
         if(this.lastChunkPositive.length>=100) {
+            this.removeChunkWhichAreOutOfVisRange(foundIds);
             this.removeChunkWhichAreOutOfVisRange(foundIds);
             this.removeChunkWhichAreOutOfVisRange(foundIds);
         }
