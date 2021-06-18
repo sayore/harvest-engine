@@ -4,8 +4,9 @@ const db = new Database('./foobar.db', { verbose: console.log });
 
 export namespace SQL {
     export enum Fieldtype {
-        VARCHAR="VARCHAR",
-        INT="INT"
+        VARCHAR = "VARCHAR",
+        INT = "INT",
+        TEXT = "TEXT"
     }
 
     export enum Extras {
@@ -34,6 +35,12 @@ export namespace SQL {
             else 
             return db.prepare("PRAGMA table_info("+table.tblname+")").all();
         }
+        static getIndexInfo(table:string | Table) : ColumnInformation[] {
+            if(typeof(table)=="string")
+            return db.prepare("PRAGMA index_list('"+table+"')").all();
+            else 
+            return db.prepare("PRAGMA index_list("+table.tblname+")").all();
+        }
 
         static existsTable(table:string) {
             return !!db.prepare("SELECT * FROM sqlite_master WHERE tbl_name='"+table+"'").get();
@@ -45,6 +52,12 @@ export namespace SQL {
     }
 
     export class Table {
+        addIndex(fieldnames:string[], indexname:string="firstindex", unique:boolean=true) {
+            db.exec(`CREATE ${unique?"UNIQUE":""} INDEX IF NOT EXISTS ${indexname?"firstindex":""}
+              ON ${this.tblname} 
+                (${fieldnames.join(",")})`);
+            return this;
+        }
 
         constructor(
             public tblname:string,
@@ -95,6 +108,7 @@ export namespace SQL {
                 //Create whole table.
                 this.create();
             }
+            return this;
         }
 
         addField(name:string |Field, 
@@ -134,6 +148,7 @@ export namespace SQL {
         }
 
         getTableInfo() { return Info.getTableInfo(this.tblname); }
+        getIndexInfo() { return Info.getIndexInfo(this.tblname); }
 
         private updateTableInfo() {
             this.tableInfo = Info.getTableInfo(this.tblname);
@@ -173,12 +188,16 @@ export namespace SQL {
 
 
 
-new SQL.Table("chunks")
+var table = new SQL.Table("chunks")
     .addField("uuid",SQL.Fieldtype.VARCHAR,64)
     .addField("x",SQL.Fieldtype.INT)
     .addField("y",SQL.Fieldtype.INT)
+    .addField("data",SQL.Fieldtype.TEXT) 
+    .addIndex(["x","y"],"spartialindex",true)
     .createOrUpdateTable()
 
+console.log(table.getTableInfo());
+console.log(table.getIndexInfo());
 /**
 try {
     console.log(db.exec("SELECT * FROM chunks LIMIT 0,1"))
