@@ -217,4 +217,8 @@
         retVec.deserializeFrom2char(data);
         return retVec;
     }
+
+    asString() {
+        return this.x+", "+this.y;
+    }
 }
