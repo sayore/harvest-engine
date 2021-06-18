@@ -186,27 +186,4 @@ export namespace SQL {
     }
 }
 
-
-
-var table = new SQL.Table("chunks")
-    .addField("uuid",SQL.Fieldtype.VARCHAR,64)
-    .addField("x",SQL.Fieldtype.INT)
-    .addField("y",SQL.Fieldtype.INT)
-    .addField("data",SQL.Fieldtype.TEXT) 
-    .addIndex(["x","y"],"spartialindex",true)
-    .createOrUpdateTable()
-
-console.log(table.getTableInfo());
-console.log(table.getIndexInfo());
-/**
-try {
-    console.log(db.exec("SELECT * FROM chunks LIMIT 0,1"))
-} catch(e) {
-    console.log(e)
-    console.log(db.exec(`CREATE TABLE chunks
-    ( 
-      uuid VARCHAR(64)
-    );`)); 
-}*/
-
 export let permanentDatabase = db;
