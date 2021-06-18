@@ -9,6 +9,7 @@ export class InputHandler extends ClientEntity {
     Events: Map<EventTypesAvailable, IndexableEventListener<any>> = new Map([
         [EventTypesAvailable.KeyUp,                 new IndexableEventListener<KeyboardEvent>("keyup")     ],
         [EventTypesAvailable.KeyDown ,              new IndexableEventListener<KeyboardEvent>("keydown")   ],
+        [EventTypesAvailable.MouseClick ,           new IndexableEventListener<MouseEvent>("click")   ],
         [EventTypesAvailable.VisibilityChanged ,    new IndexableEventListener<any>("visibilitychange")   ]
     ]);
 
@@ -29,6 +30,7 @@ export class InputHandler extends ClientEntity {
 export enum EventTypesAvailable {
     KeyUp= "keyup",
     KeyDown= "keydown",
+    MouseClick= "click",
     VisibilityChanged= "visibilitychange",
 }
 

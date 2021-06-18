@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
-const db = new Database('./foobar.db', { verbose: console.log });
+const db = new Database('./foobar.db', {  });
+//const db = new Database('./foobar.db', { verbose: console.log });
 
 
 export namespace SQL {
@@ -52,18 +53,23 @@ export namespace SQL {
     }
 
     export class Table {
-        addIndex(fieldnames:string[], indexname:string="firstindex", unique:boolean=true) {
-            db.exec(`CREATE ${unique?"UNIQUE":""} INDEX IF NOT EXISTS ${indexname?"firstindex":""}
+        public fields:Field[]=[];
+
+        addIndex(fieldnames:string[], indexname:string=null, unique:boolean=true) {
+            db.exec(`CREATE ${unique?"UNIQUE":""} INDEX IF NOT EXISTS ${indexname==null?"idx_"+this.tblname:"idx_"+this.tblname+"_"+indexname}
               ON ${this.tblname} 
                 (${fieldnames.join(",")})`);
+            
             return this;
         }
-
+        
         constructor(
             public tblname:string,
-            public fields:Field[]=[],
             public tableInfo = Info.getTableInfo(tblname)
         ) {
+            tableInfo.forEach((ci)=>{
+                this.fields.push(new Field(ci.name,null,null,null).setTypeAsString(ci.type))
+            })
         }
 
         getStatements() : string[] {
@@ -76,6 +82,22 @@ export namespace SQL {
             return db.exec(`CREATE TABLE ${this.tblname}(
                 ${this.fields.map(f=>f.asSQL()).join(",\n")}
             )`);
+        }
+
+        where<T>(where:string) : T[] {
+            return db.prepare(`SELECT * FROM ${this.tblname} WHERE ${where}`).all() as T[];
+        }
+
+        find<T>(where:string) : T {
+            return db.prepare(`SELECT * FROM ${this.tblname} WHERE ${where}`).get() as T;
+        }
+
+        delete() {
+            db.exec(`DROP TABLE ${this.tblname}`);
+        }
+
+        exists() {
+            return this.tableInfo.length==1;
         }
 
         /**
@@ -167,6 +189,21 @@ export namespace SQL {
 
             if(this.fieldtype==Fieldtype.INT && !this.size) { this.size=9 }
             if(this.fieldtype==Fieldtype.VARCHAR && !this.size) { this.size=255 }
+        }
+
+        setTypeAsString(type:string) {
+            let typename="";
+            let typelength="";
+            for (let i = 0; i < type.length; i++) {
+                const char = type[i];
+                
+                if(char.match(/[A-Za-z]/)) {typename+=char;}
+                if(char.match(/[0-9]/)) {typelength+=char;}
+            }
+            this.fieldtype=typename as Fieldtype;
+            this.size=(typelength==""?null:Number(typelength));
+
+            return this;
         }
 
         addExtra(extra:Extras) {

@@ -38,6 +38,15 @@ export class Mouse extends ClientEntity implements IDrawable {
             this.MyGraphics.x=this.Position.x-this.Position.x%64;
             this.MyGraphics.y=this.Position.y-this.Position.y%64;
         });
+
+        this.game.stage.on("click",(ev:any)=>{
+            console.log("click on "+
+                ""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64) + "\nChunk:"+
+                Math.floor((this.Position.x-this.Position.x%64)/this.game.coreChunkSizeInPixels.x)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/this.game.coreChunkSizeInPixels.y)
+                );
+
+            if(this.mode=)
+        });
     }
 
     guiInit() {
@@ -48,4 +57,10 @@ export class Mouse extends ClientEntity implements IDrawable {
     postUpdate() {
         this.tilePos.text=""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64);
     }
+}
+
+export enum MouseStates {
+    Interact,
+    Build,
+    Move
 }
