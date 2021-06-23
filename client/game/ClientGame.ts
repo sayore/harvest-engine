@@ -76,6 +76,7 @@ export class ClientGame extends CommonGame {
             .add('PressStart2P-Regular', "sprite/PressStart2P-Regular.ttf")
             .add("player","sprite/player-v1.png")
             .add("rpgtileset","sprite/RPGpack_sheet.png")
+            .add("menu","sprite/menu.png")
             .add("test","sprite/test.txt")
             .load();
         
@@ -207,6 +208,10 @@ export class ClientGame extends CommonGame {
          * you resize the browser window and the canvas goes will be cleared.
          */
         this.renderer.resize(this.gameWidth/2   ,this.gameHeight/2); 
+
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].windowResized(this.gameWidth   ,this.gameHeight);
+        }
         
         //this.draw(); 
         console.log("Resized.")

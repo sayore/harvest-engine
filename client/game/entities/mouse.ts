@@ -7,6 +7,7 @@ export class Mouse extends ClientEntity implements IDrawable {
     MyGraphics:Graphics;
     tilePos: Text;
     Position: Vector=<Vector>{x:0,y:0};
+    mode: MouseStates;
     
     initialize() {
         this.MyGraphics = new Graphics();
@@ -24,7 +25,7 @@ export class Mouse extends ClientEntity implements IDrawable {
         this.tilePos.zIndex=-100;
         this.game.gui.addChild(this.tilePos);
             
-        this.game.stage.on("mousemove",(ev:any)=>{
+        this.game.stage.on("pointermove",(ev:any)=>{
             //console.log(ev.data);
             //console.log(ev.data.global.x+", "+ev.data.global.y);
             this.Position.x = ev.data.global.x-this.game.stage.x;
@@ -39,24 +40,64 @@ export class Mouse extends ClientEntity implements IDrawable {
             this.MyGraphics.y=this.Position.y-this.Position.y%64;
         });
 
-        this.game.stage.on("click",(ev:any)=>{
-            console.log("click on "+
-                ""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64) + "\nChunk:"+
-                Math.floor((this.Position.x-this.Position.x%64)/this.game.coreChunkSizeInPixels.x)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/this.game.coreChunkSizeInPixels.y)
-                );
 
-            if(this.mode=)
+        this.game.stage.on("pointerdown",(ev:any)=>{
+            console.log(
+                "Absolute tile:"
+                +this.absTilePosition()
+                +"\nChunk:"
+                +this.absChunk()
+                +"Chunk relative tile:"
+                +this.absTilePosition().mod(this.game.coreChunksize)
+            );
+
+            if(this.mode=MouseStates.Build) {
+                
+            }
+            if(this.mode=MouseStates.Interact) {
+
+            }
+            if(this.mode=MouseStates.Move) {
+
+            }
         });
     }
 
-    guiInit() {
-        
+    absTilePosition() : Vector {
+        return Vector
+                    .modNumber(this.Position, 64)
+                    .sub(this.Position)
+                    .floor()
+                    .divNumber(-64);
+    }
+
+    absChunk() : Vector {
+        return Vector
+                    .modNumber(this.Position, 64)
+                    .sub(this.Position).floor()
+                    .div(this.game.coreChunkSizeInPixels)
+                    .mulNumber(-1)
+                    .floor();
+    }
+
+    relativeToChunkTilePos():Vector {
+        return this
+                    .absTilePosition()
+                    .mod(this.game.coreChunksize);
     }
 
     private amount=1;
     postUpdate() {
-        this.tilePos.text=""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64);
+        
+        this.tilePos.text=this.absTilePosition().asString()+"\n"+this.absChunk().asString()+"\n"+this.relativeToChunkTilePos().asString();
     }
+    /**
+     * console.log("click on "+
+                ""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64) + "\nChunk:"+
+                Math.floor((this.Position.x-this.Position.x%64)/this.game.coreChunkSizeInPixels.x)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/this.game.coreChunkSizeInPixels.y)
+this.tilePos.text=""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " + Math.floor((this.Position.y-this.Position.y%64)/64);
+
+     */
 }
 
 export enum MouseStates {

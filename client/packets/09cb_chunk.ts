@@ -7,6 +7,7 @@ import { BasePacket } from "./base";
 
 export class ChunkCallBackPaket extends BasePacket{
     handle(chunkStr:string) {
+        if(chunkStr==null) return;
         let chunk=Chunk.deserialize(chunkStr);
 
         let MyGraphics = new Graphics();

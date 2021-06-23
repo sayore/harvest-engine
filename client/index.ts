@@ -7,6 +7,7 @@ import { Player } from "./game/entities/player";
 import { ClientGame } from "./game/ClientGame";
 import { InputHandler } from "./game/InputHandler";
 import { FPSCounterEntity } from "./game/entities/fpscounter";
+import { Inventory } from "./game/entities/inventory";
 
 export let socket: Socket;
 export let game: ClientGame;
@@ -22,7 +23,7 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
   socket = io("https://sayore.de/",{
       secure: true,
       query: {
-        x: "42",
+        x: "42", 
         requestedUUID: (requestKey!=null?requestKey:undefined)
       }
     });
@@ -35,6 +36,7 @@ console.log("Requested UUID: "+localStorage.getItem('uuid'))
   game.add(new InputHandler());
   game.add(new ChunkHandler());
   game.add(new Mouse());
+  game.add(new Inventory());
   game.add(new Player());
 
   for (let i = 0; i < 100; i++) {
@@ -44,7 +46,7 @@ console.log("Requested UUID: "+localStorage.getItem('uuid'))
     game.add(newBlock);
   }
 
-  game.start(socket);
+  game.start(socket); 
 
   setInterval(()=>{
       //console.log(socket.active)
