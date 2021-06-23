@@ -3,7 +3,7 @@ import { ITypeable } from "./interface/ITypeable";
 
 export class CommonEntity implements ITypeable{
     Type: string="CommonEntity";
-    game:CommonGame;
+    Game:CommonGame;
     
     initialize() {}
     preUpdate(progress:number) {}

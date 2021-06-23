@@ -14,18 +14,19 @@ export class FPSCounterEntity extends ClientEntity implements IDrawable {
     static c = 0;
     initialize() {
         this.MyGraphics = new Graphics();
-        this.fpsCounter = new Text("No Text",{fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black'});
+        this.fpsCounter = new Text("No Text",{fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black',padding:5});
         this.fpsCounter.x = 920;
         this.fpsCounter.y = 10;
-        this.game.gui.addChild(this.fpsCounter);
+        this.fpsCounter.resolution = 4;
+        this.Game.gui.addChild(this.fpsCounter);
     }
 
 
     update() {
-        if(this.game.fpsMedian.length==0) return;
-        this.fpsCounter.text = (this.game.fpsMedian.reduce((a,y)=>(a+y))/this.game.fpsMedian.length).toPrecision(4) + "("+this.game.fpsMedian.length+")\n"+this.game.entities.length;
-        this.fpsCounter.x = 100;
-        this.fpsCounter.y = 100;
+        if(this.Game.FpsMedian.length==0) return;
+        this.fpsCounter.text = (this.Game.FpsMedian.reduce((a,y)=>(a+y))/this.Game.FpsMedian.length).toPrecision(4) + "("+this.Game.FpsMedian.length+")\n"+this.Game.Entities.length;
+        this.fpsCounter.x = 10;
+        this.fpsCounter.y = 10;
 
         this.MyGraphics.setTransform(this.Position.x, this.Position.y)
     }

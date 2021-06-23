@@ -2,9 +2,9 @@ import { CommonEntity } from "../../lib/CommonEntity";
 import { ClientGame } from "./ClientGame";
 
 export class ClientEntity extends CommonEntity {
-    game:ClientGame;
+    Game:ClientGame;
     Type:string="NoTypeEntity";
-    uuid: string;
+    UUID: string;
     
     //Initialize (only called once at game start)
     initialize() {}
@@ -46,6 +46,6 @@ export class ClientEntity extends CommonEntity {
     unload() {};
     
     remove() {
-        this.game.removeEntity(this);
+        this.Game.removeEntity(this);
     };
 }

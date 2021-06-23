@@ -9,10 +9,10 @@ export class Tileeditor extends ClientEntity implements IDrawable {
     
     initialize() {
         this.MyGraphics = new Graphics();
-        var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture,64,64);
+        var ts = new TilingSprite(this.Game.Loader.resources["rpgtileset"].texture,64,64);
             
         this.MyGraphics.addChild(ts);
-        this.game.stage.addChild(this.MyGraphics);
+        this.Game.stage.addChild(this.MyGraphics);
     }
 
     private amount=1;

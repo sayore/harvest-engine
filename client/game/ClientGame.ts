@@ -12,11 +12,11 @@ import { Entity } from "../../server/game/entity";
 export class ClientGame extends CommonGame {
     
     public lastRender = 0
-    public socket : Socket;
-    public entities: ClientEntity[] = [];
-    public coreTilesize = new Vector(64,64);
-    public coreChunksize = new Vector(8,8);
-    public coreChunkSizeInPixels = Vector.mul(this.coreTilesize,this.coreChunksize);
+    public Socket : Socket;
+    public Entities: ClientEntity[] = [];
+    public CoreTilesize = new Vector(64,64);
+    public CoreChunksize = new Vector(8,8);
+    public CoreChunkSizeInPixels = Vector.mul(this.CoreTilesize,this.CoreChunksize);
     
     //SYSTEMS
     CollisionSystem = new Collisions();
@@ -33,13 +33,13 @@ export class ClientGame extends CommonGame {
     stage:Container;
     gui:Container;
     
-    gameWidth: number;
-    gameHeight: number;
-    globalOffset: [x: number, y: number] = [0, 0];
+    GameWidth: number;
+    GameHeight: number;
+    GlobalOffset: [x: number, y: number] = [0, 0];
     
-    loader = Loader.shared;
-    resources = Loader.shared.resources;
-    fpsMedian:number[] = [];
+    Loader = Loader.shared;
+    Resources = Loader.shared.resources;
+    FpsMedian:number[] = [];
     
 
     start(socket: Socket) {
@@ -56,12 +56,15 @@ export class ClientGame extends CommonGame {
 
         this.map = new Container();
         this.map.interactive=true;
+        this.map.zIndex=0
 
         this.stage = new Container();
         this.stage.interactive=true;
+        this.stage.zIndex=50
 
         this.gui = new Container();
         this.gui.interactive=true;
+        this.gui.zIndex=100
         
         
         // resize the canvas to fill browser window dynamically
@@ -69,10 +72,10 @@ export class ClientGame extends CommonGame {
           
         
         //window.requestAnimationFrame((ts)=>{this.loop(ts)});
-        this.socket = socket;
+        this.Socket = socket;
 
 
-        this.loader
+        this.Loader
             .add('PressStart2P-Regular', "sprite/PressStart2P-Regular.ttf")
             .add("player","sprite/player-v1.png")
             .add("rpgtileset","sprite/RPGpack_sheet.png")
@@ -80,7 +83,7 @@ export class ClientGame extends CommonGame {
             .add("test","sprite/test.txt")
             .load();
         
-        this.loader.onComplete.add(() => {
+        this.Loader.onComplete.add(() => {
             //console.log("Loaded all resources.. [ "+ this.loader. +" ]")
             this.initialize();
         }); 
@@ -117,9 +120,9 @@ export class ClientGame extends CommonGame {
         ticker.add((time) => {
             // THIS IS HE REAL GAME LOOP!!
             // LOOK HERE
-            this.fpsMedian.push(ticker.FPS);
-            if(this.fpsMedian.length>50)
-            this.fpsMedian.shift();
+            this.FpsMedian.push(ticker.FPS);
+            if(this.FpsMedian.length>50)
+            this.FpsMedian.shift();
 
             // Lock GUI to Stage(camera)
             //this.gui.x = 0;
@@ -129,8 +132,8 @@ export class ClientGame extends CommonGame {
         });
 
         // Initialize
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].initialize();
+        for (let i = 0; i < this.Entities.length; i++) {
+            this.Entities[i].initialize();
         }
         
 
@@ -154,8 +157,8 @@ export class ClientGame extends CommonGame {
     
     registerCollisionObjects() {
         // Draw the state of the world
-        for (let i = 0; i < this.entities.length; i++) {
-            var ent = this.entities[i]
+        for (let i = 0; i < this.Entities.length; i++) {
+            var ent = this.Entities[i]
             if(TypeCheck.isCollidable(ent))
             {
                 this.movableEntities.push(ent);
@@ -200,17 +203,17 @@ export class ClientGame extends CommonGame {
     resizeCanvas() {
         //this.canvas.width = window.innerWidth;
         //this.canvas.height = window.innerHeight;
-        this.gameWidth = window.innerWidth;
-        this.gameHeight = window.innerHeight;
+        this.GameWidth = window.innerWidth;
+        this.GameHeight = window.innerHeight;
 
         /**
          * Your drawings need to be inside this function otherwise they will be reset when 
          * you resize the browser window and the canvas goes will be cleared.
          */
-        this.renderer.resize(this.gameWidth/2   ,this.gameHeight/2); 
+        this.renderer.resize(this.GameWidth/2   ,this.GameHeight/2); 
 
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].windowResized(this.gameWidth   ,this.gameHeight);
+        for (let i = 0; i < this.Entities.length; i++) {
+            this.Entities[i].windowResized(this.GameWidth   ,this.GameHeight);
         }
         
         //this.draw(); 

@@ -1,3 +1,5 @@
+import { MathExt } from "../ext/MathExt";
+
     export class Vector {
     negate(): Vector {
         this.x = -this.x;
@@ -156,7 +158,13 @@
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
         return this;
-    };
+        };
+        
+    clamp(clamtorMin:Vector, clamptorMax: Vector) {
+        this.x = MathExt.clamp(this.x, clamtorMin.x, clamptorMax.x);
+        this.y = MathExt.clamp(this.y, clamtorMin.y, clamptorMax.y);
+        return this;
+    }
     /**
      * Calculates the distance(1d) to the other Vector.
      * @param target Vector to look at.

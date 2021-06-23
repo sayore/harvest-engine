@@ -19,7 +19,7 @@ export class ChunkPacket extends BasePacket{
             ]);
         
 
-        this.player.socket.emit("09cb",data)
+        this.player.socket.emit("09cb",data) 
         
         ////permanentDatabase.prepare("SELECT * FROM chunks WHERE ")
         //this.player.socket.emit("10",retChunk.serialize())

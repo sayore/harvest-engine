@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { PlayerPosition } from "../../lib/packets/PlayerPositionUpdate";
 import { Vector } from "../../lib/types/Vector";
-import { PlayerExternal } from "../game/entities/player_external";
+import { PlayerExternal } from "../game/entities/PlayerExternal";
 import { BasePacket } from "./base";
 
 export class MovePacket extends BasePacket{
@@ -9,7 +9,7 @@ export class MovePacket extends BasePacket{
     handle(playerpositions:PlayerPosition[]) {
         playerpositions.forEach((pp:PlayerPosition)=>{
             if(pp.UUID == localStorage.getItem("uuid")) return;
-            let entity = <PlayerExternal>this.game.entities.find(ent=>{return (ent.uuid==pp.UUID && ent.Type=="PlayerExternal")});
+            let entity = <PlayerExternal>this.game.Entities.find(ent=>{return (ent.UUID==pp.UUID && ent.Type=="PlayerExternal")});
             
             //console.log(entity);
             

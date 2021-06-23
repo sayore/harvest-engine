@@ -64,12 +64,12 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
     }
 
     initialize() {
-        this.CollisionBox = this.game.CollisionSystem.createCircle(this.Position.x, this.Position.y, 32)
+        this.CollisionBox = this.Game.CollisionSystem.createCircle(this.Position.x, this.Position.y, 32)
         this.CollisionBox.owner = this;
 
         this.packageRegistry = new PacketRegistry();
-        this.packageRegistry.game = this.game;
-        this.packageRegistry.socket = this.game.socket;
+        this.packageRegistry.game = this.Game;
+        this.packageRegistry.socket = this.Game.Socket;
         this.packageRegistry.register("00", new RegisterPacket());
         this.packageRegistry.register("01", new ChatPacket());
         this.packageRegistry.register("01b", new ChatBroadcastPacket());
@@ -80,25 +80,25 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
         this.packageRegistry.register("10", new ConsolePaket());
 
         this.packageRegistry.packetsRegistred.forEach(packet => {
-            this.game.socket.on(packet[0], (args) => { /*console.log("REIC " + packet[0]);*/ packet[1].handle(args); });
+            this.Game.Socket.on(packet[0], (args) => { /*console.log("REIC " + packet[0]);*/ packet[1].handle(args); });
         });
         setTimeout(() => {
-            this.game.socket.emit("00");
-            this.game.socket.emit("03");
+            this.Game.Socket.emit("00");
+            this.Game.Socket.emit("03");
         }, 1000)
 
         this.MyGraphics = new PIXI.Graphics();
-        this.MySprite = new TilingSprite(this.game.loader.resources["player"].texture, 64, 64);
+        this.MySprite = new TilingSprite(this.Game.Loader.resources["player"].texture, 64, 64);
         this.MySprite.tilePosition.x = 0
         this.MyGraphics.addChild(this.MySprite);
         //this.MyTexture = this.game.renderer.generateTexture(this.MyGraphics);
         //this.MyRenderedSprite = new Sprite(this.MyTexture);
         //this.game.stage.addChild(this.MyRenderedSprite);
 
-        this.game.stage.addChild(this.MyGraphics);
+        this.Game.stage.addChild(this.MyGraphics);
         console.log("Added Sprite to Stage.")
 
-        var ih = this.game.getEntity<InputHandler>("InputHandler");
+        var ih = this.Game.getEntity<InputHandler>("InputHandler");
         this.myVisibilityChangedEventId = ih.Events.get(EventTypesAvailable.VisibilityChanged).addListener(() => {
             console.log("Vis changed!!");
             this.PressedKeys.clear();
@@ -232,11 +232,11 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
         if (this.PollingState % this.PollingRate==0) {
             //socket.emit("04", { uuid: this.UniqueIdentifier, position: this.Position })
             if(localStorage.getItem('uuid')!=undefined) {
-                this.game.socket.emit("04", new PlayerPosition(localStorage.getItem('uuid'), this.Position.clone()))
+                this.Game.Socket.emit("04", new PlayerPosition(localStorage.getItem('uuid'), this.Position.clone()))
             }
             else {
                 // Rerequest the UUID in case uuid packet was too slow.
-                this.game.socket.emit("08")
+                this.Game.Socket.emit("08")
             }
             
         }
@@ -244,26 +244,28 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
 
         this.MyGraphics.setTransform(this.Position.x, this.Position.y)
 
+        // Update Camera
+        return;
         if (this.LastCameraPositions.length > 20) this.LastCameraPositions.shift();
         this.LastCameraPositions.push(new Vector(
-            -this.Position.x + this.game.renderer.width / 2 - this.MySprite.width / 2,
-            -this.Position.y + this.game.renderer.height / 2 - this.MySprite.height / 2
+            -this.Position.x + this.Game.renderer.width / 2 - this.MySprite.width / 2,
+            -this.Position.y + this.Game.renderer.height / 2 - this.MySprite.height / 2
         ))
         if (this.LastCameraPositions.length > 2) {
             this.MedianCameraPos = this.LastCameraPositions.reduce((a, b) => { return a.add(b) });
-            this.game.stage.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
-            this.game.stage.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
-            this.game.map.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
-            this.game.map.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
+            this.Game.stage.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
+            this.Game.stage.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
+            this.Game.map.x = this.MedianCameraPos.x / this.LastCameraPositions.length;
+            this.Game.map.y = this.MedianCameraPos.y / this.LastCameraPositions.length;
         }
     }
 
     unload() {
-        var ih = this.game.getEntity<InputHandler>("InputHandler");
+        var ih = this.Game.getEntity<InputHandler>("InputHandler");
         ih.Events.get(EventTypesAvailable.KeyDown).removeListener(this.myKeyDownEventId);
         ih.Events.get(EventTypesAvailable.KeyUp).removeListener(this.myKeyUpEventId);
         ih.Events.get(EventTypesAvailable.VisibilityChanged).removeListener(this.myVisibilityChangedEventId);
 
-        this.game.stage.removeChild(this.MyGraphics);
+        this.Game.stage.removeChild(this.MyGraphics);
     }
 }

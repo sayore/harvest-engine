@@ -2,7 +2,7 @@ import { Graphics, TilingSprite } from "pixi.js";
 import { Socket } from "socket.io-client";
 import { game } from "..";
 import { Chunk } from "../../lib/types/Chunk";
-import { ChunkHandler } from "../game/entities/chunkHandler";
+import { ChunkHandler } from "../game/entities/ChunkHandler";
 import { BasePacket } from "./base";
 
 export class ChunkCallBackPaket extends BasePacket{
@@ -12,7 +12,7 @@ export class ChunkCallBackPaket extends BasePacket{
 
         let MyGraphics = new Graphics();
         for (let i = 0; i < chunk.data.length; i++) {
-            var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture, 64, 64);
+            var ts = new TilingSprite(this.game.Loader.resources["rpgtileset"].texture, 64, 64);
             ts.tilePosition.x = chunk.data[i].TileInTileset.x*-64;
             ts.tilePosition.y = chunk.data[i].TileInTileset.y*-64;
             ts.x = (i%8)*64;

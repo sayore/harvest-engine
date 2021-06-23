@@ -39,12 +39,12 @@ export class ABlock extends ClientEntity implements IDrawable, ICollisionable {
 
         switch(ABlock.c%4){
             case 0: 
-                this.CollisionBox = this.game.CollisionSystem.createCircle(this.Position.x - 32, this.Position.y - 32, 32);
+                this.CollisionBox = this.Game.CollisionSystem.createCircle(this.Position.x - 32, this.Position.y - 32, 32);
                 this.MyGraphics.beginFill(0x00FFFF);
                 this.MyGraphics.drawCircle(0, 0, 32);
                 this.MyGraphics.endFill();
                 this.MyGraphics.setTransform(this.Position.x, this.Position.y)
-                this.game.stage.addChild(this.MyGraphics);
+                this.Game.stage.addChild(this.MyGraphics);
                 break;
             case 1:
                 var points = [
@@ -53,14 +53,14 @@ export class ABlock extends ClientEntity implements IDrawable, ICollisionable {
                     + 32, +32,
                     -32, +32
                 ];
-                this.CollisionBox = this.game.CollisionSystem.createPolygon(
+                this.CollisionBox = this.Game.CollisionSystem.createPolygon(
                     this.Position.x, this.Position.y,this.makeCollisionSystemPoints(points));
                 this.MyGraphics.beginFill(0xFF00FF);
                 this.MyGraphics.drawPolygon(points);
                 this.MyGraphics.endFill();
                 
                 this.MyGraphics.setTransform(this.Position.x, this.Position.y)
-                this.game.stage.addChild(this.MyGraphics);
+                this.Game.stage.addChild(this.MyGraphics);
                 break;
             case 2:
                 var points = [
@@ -68,14 +68,14 @@ export class ABlock extends ClientEntity implements IDrawable, ICollisionable {
                     + 32, +32,
                     -32, +32
                 ];
-                this.CollisionBox = this.game.CollisionSystem.createPolygon(
+                this.CollisionBox = this.Game.CollisionSystem.createPolygon(
                     this.Position.x, this.Position.y,this.makeCollisionSystemPoints(points));
                 this.MyGraphics.beginFill(0xFFFF00);
                 this.MyGraphics.drawPolygon(points);
                 this.MyGraphics.endFill();
                 
                 this.MyGraphics.setTransform(this.Position.x, this.Position.y)
-                this.game.stage.addChild(this.MyGraphics);
+                this.Game.stage.addChild(this.MyGraphics);
                 break;
             case 3:
                 var points = [
@@ -88,14 +88,14 @@ export class ABlock extends ClientEntity implements IDrawable, ICollisionable {
                     -32,20,
                     -32,-20,
                 ];
-                this.CollisionBox = this.game.CollisionSystem.createPolygon(
+                this.CollisionBox = this.Game.CollisionSystem.createPolygon(
                     this.Position.x, this.Position.y,this.makeCollisionSystemPoints(points));
                 this.MyGraphics.beginFill(0xFFFF00);
                 this.MyGraphics.drawPolygon(points);
                 this.MyGraphics.endFill();
                 
                 this.MyGraphics.setTransform(this.Position.x, this.Position.y)
-                this.game.stage.addChild(this.MyGraphics);
+                this.Game.stage.addChild(this.MyGraphics);
                 break;
         }
 

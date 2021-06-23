@@ -4,7 +4,7 @@ import { ChunkRequest } from "../../../lib/packets/ChunkRequest";
 import { Vector } from "../../../lib/types/Vector";
 import { ClientEntity } from "../ClientEntity";
 import { VisibleChunk } from "./map/visibleChunk";
-import { Player } from "./player";
+import { Player } from "./Player"; 
 
 
 export class ChunkHandler extends ClientEntity implements IDrawable {
@@ -12,19 +12,19 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
     MyGraphics: Graphics;
     fpsCounter: Text;
     drawnChunks: Map<string, VisibleChunk>;
-    player: Player;
-    emptyChunkTexture: RenderTexture;
-    loadedChunks: Map<string, VisibleChunk>;
+    Player: Player;
+    EmptyChunkTexture: RenderTexture;
+    LoadedChunks: Map<string, VisibleChunk>;
     Position: Vector;
 
     initialize() {
-        this.player = this.game.getEntity<Player>("Player");
+        this.Player = this.Game.getEntity<Player>("Player");
         this.MyGraphics = new Graphics();
 
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
 
-                var ts = new TilingSprite(this.game.loader.resources["rpgtileset"].texture, 64, 64);
+                var ts = new TilingSprite(this.Game.Loader.resources["rpgtileset"].texture, 64, 64);
                 ts.tilePosition.x = -64;
                 ts.tilePosition.y = -64;
                 ts.y = 64 * i;
@@ -33,7 +33,7 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
             }
         }
 
-        this.emptyChunkTexture = this.game.renderer.generateTexture(this.MyGraphics)
+        this.EmptyChunkTexture = this.Game.renderer.generateTexture(this.MyGraphics)
         //var drawnEmptyChunk = new Sprite(this.emptyChunkTexture);
 
 
@@ -86,9 +86,9 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
         return new Vector(Number(xpos), Number(ypos));
     }
 
-    addChunk(pos:Vector, texture: RenderTexture = this.emptyChunkTexture) {
-        if(texture==this.emptyChunkTexture)
-        this.game.socket.emit("09",new ChunkRequest(pos));
+    addChunk(pos:Vector, texture: RenderTexture = this.EmptyChunkTexture) {
+        if(texture==this.EmptyChunkTexture)
+        this.Game.Socket.emit("09",new ChunkRequest(pos));
         //console.log("Loaded chunk "+pos.x+" "+pos.y)
         
         // Get Chunk from Server - - -
@@ -96,14 +96,14 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
 
         this.loadedChunkTextures.set(this.getChunkId(pos),chunkSprite);
 
-        var posToDraw = Vector.mul(pos,this.game.coreChunkSizeInPixels);
+        var posToDraw = Vector.mul(pos,this.Game.CoreChunkSizeInPixels);
         chunkSprite.setTransform(posToDraw.x,posToDraw.y);
-        this.game.map.addChild(chunkSprite);
+        this.Game.map.addChild(chunkSprite);
         this.lastChunkPositive.push([this.getChunkId(pos),chunkSprite,pos]);
     }
     removeChunk(chunk:[string, Sprite, Vector]) {
         //console.log("Remove "+chunk[0]);
-        this.game.map.removeChild(chunk[1]);
+        this.Game.map.removeChild(chunk[1]);
         this.lastChunkPositive = this.lastChunkPositive.filter(lcp => lcp[0]!=chunk[0]);
     }
     removeChunkViaId(chunkId:string) : boolean {
@@ -111,7 +111,7 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
         let find = this.lastChunkPositive.find(lcp => lcp[0]!=chunkId)
         if(!find) return false;
 
-        this.game.map.removeChild(find[1]);
+        this.Game.map.removeChild(find[1]);
         this.lastChunkPositive = this.lastChunkPositive.filter(lcp => lcp[0]!=chunkId);
         return true;
     }
@@ -122,8 +122,8 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
     loadedChunkTextures:Map<string, Sprite> = new Map();
     lastChunkPositive:[string, Sprite, Vector][] = [];
     visibleChunkCheck() {
-        var topLeft = this.player.Position.clone().subNumber(this.game.gameWidth+400).div(this.game.coreChunkSizeInPixels).floor();
-        var bottomRight = this.player.Position.clone().addNumber(this.game.gameWidth+400).div(this.game.coreChunkSizeInPixels).ceil();
+        var topLeft = this.Player.Position.clone().subNumber(this.Game.GameWidth+400).div(this.Game.CoreChunkSizeInPixels).floor();
+        var bottomRight = this.Player.Position.clone().addNumber(this.Game.GameWidth+400).div(this.Game.CoreChunkSizeInPixels).ceil();
         var foundIds:Set<string> = new Set();
 
         for (let i = topLeft.x; i < bottomRight.x; i++) {

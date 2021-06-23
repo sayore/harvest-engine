@@ -1,13 +1,14 @@
 import { io, Socket } from "socket.io-client";
 import { Vector } from "../lib/types/Vector";
-import { ABlock } from "./game/entities/ablock";
-import { ChunkHandler } from "./game/entities/chunkHandler";
-import { Mouse } from "./game/entities/mouse";
-import { Player } from "./game/entities/player";
+import { ChunkHandler } from "./game/entities/ChunkHandler"; 
 import { ClientGame } from "./game/ClientGame";
 import { InputHandler } from "./game/InputHandler";
-import { FPSCounterEntity } from "./game/entities/fpscounter";
-import { Inventory } from "./game/entities/inventory";
+import { FPSCounterEntity as FPSCounter } from "./game/entities/FpsCounter";
+import { Mouse } from "./game/entities/Mouse";
+import { Inventory } from "./game/entities/Inventory";
+import { BigInventory } from "./game/entities/BigInventory";
+import { Player } from "./game/entities/Player";
+import { ABlock } from "./game/entities/ABlock";
 
 export let socket: Socket;
 export let game: ClientGame;
@@ -20,7 +21,7 @@ if(agreed_tos && 1622994700045 < Number(agreed_tos))
   //export let socket = io("https://sayore.de/",{
 
   let requestKey = <string>localStorage.getItem('uuid');
-  socket = io("https://sayore.de/",{
+  socket = io("https://"+window.location.hostname+"/",{
       secure: true,
       query: {
         x: "42", 
@@ -32,19 +33,20 @@ console.log("Requested UUID: "+localStorage.getItem('uuid'))
   game = new ClientGame();
   //game.add(new Player()); 
 
-  game.add(new FPSCounterEntity());
+  game.add(new FPSCounter());
   game.add(new InputHandler());
   game.add(new ChunkHandler());
   game.add(new Mouse());
   game.add(new Inventory());
-  game.add(new Player());
+  game.add(new BigInventory());
+  game.add(new Player()); 
 
-  for (let i = 0; i < 100; i++) {
+  /*for (let i = 0; i < 100; i++) {
     //const element = array[i];
     let newBlock = new ABlock()
       newBlock.Position=new Vector(Math.random()*2000-1000,Math.random()*2000-1000);
     game.add(newBlock);
-  }
+  }*/
 
   game.start(socket); 
 

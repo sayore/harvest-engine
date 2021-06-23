@@ -28,7 +28,7 @@ export class PlayerExternal extends ClientEntity implements IDrawable, ICollisio
         uuid: string
     ) {
         super();
-        this.uuid=uuid;
+        this.UUID=uuid;
         console.log("Player "+ uuid+" has been created.")
         //setInterval(()=>{
         //    this.game.socket.emit("07",()=>{
@@ -41,15 +41,15 @@ export class PlayerExternal extends ClientEntity implements IDrawable, ICollisio
     }
 
     initialize() {
-        this.CollisionBox = this.game.CollisionSystem.createCircle(this.Position.x, this.Position.y, 32)
+        this.CollisionBox = this.Game.CollisionSystem.createCircle(this.Position.x, this.Position.y, 32)
         this.CollisionBox.owner = this;
 
         this.MyGraphics = new Graphics();
-        this.MySprite = new TilingSprite(this.game.loader.resources["player"].texture, 64, 64);
+        this.MySprite = new TilingSprite(this.Game.Loader.resources["player"].texture, 64, 64);
         this.MySprite.tilePosition.x = 0
         this.MyGraphics.addChild(this.MySprite);
 
-        this.game.stage.addChild(this.MyGraphics); 
+        this.Game.stage.addChild(this.MyGraphics); 
     }
 
     public targetPosition = new Vector(0,0);

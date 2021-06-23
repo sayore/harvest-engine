@@ -16,15 +16,15 @@ export class GPUTests extends ClientEntity implements IDrawable {
         this.fpsCounter.x = 1000;
         this.fpsCounter.y = 50;
         this.fpsCounter.zIndex = 10
-        this.game.stage.addChild(this.MyGraphics);
-        this.game.stage.addChild(this.fpsCounter);
+        this.Game.stage.addChild(this.MyGraphics);
+        this.Game.stage.addChild(this.fpsCounter);
     }
 
     private amount = 1;
     private pauseCounter=0;
     update() {
-        this.fpsCounter.x = -this.game.stage.x+1000;
-        this.fpsCounter.y = -this.game.stage.y+50;
+        this.fpsCounter.x = -this.Game.stage.x+1000;
+        this.fpsCounter.y = -this.Game.stage.y+50;
         
         this.pauseCounter+=1;
         if(this.pauseCounter != 10) {
