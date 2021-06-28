@@ -122,8 +122,8 @@ export class ChunkHandler extends ClientEntity implements IDrawable {
     loadedChunkTextures:Map<string, Sprite> = new Map();
     lastChunkPositive:[string, Sprite, Vector][] = [];
     visibleChunkCheck() {
-        var topLeft = this.Player.Position.clone().subNumber(this.Game.GameWidth+400).div(this.Game.CoreChunkSizeInPixels).floor();
-        var bottomRight = this.Player.Position.clone().addNumber(this.Game.GameWidth+400).div(this.Game.CoreChunkSizeInPixels).ceil();
+        var topLeft = this.Player.Position.clone().subNumber(this.Game.GameWidth).div(this.Game.CoreChunkSizeInPixels).floor();
+        var bottomRight = this.Player.Position.clone().addNumber(this.Game.GameWidth).div(this.Game.CoreChunkSizeInPixels).ceil();
         var foundIds:Set<string> = new Set();
 
         for (let i = topLeft.x; i < bottomRight.x; i++) {

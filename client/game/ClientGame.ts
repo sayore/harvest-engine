@@ -40,6 +40,8 @@ export class ClientGame extends CommonGame {
     Loader = Loader.shared;
     Resources = Loader.shared.resources;
     FpsMedian:number[] = [];
+
+    
     
 
     start(socket: Socket) {
@@ -74,8 +76,11 @@ export class ClientGame extends CommonGame {
         //window.requestAnimationFrame((ts)=>{this.loop(ts)});
         this.Socket = socket;
 
+        /* @ts-ignore */
+        const font = new FontFace('PressStart2P-Regular', 'url(sprite/PressStart2P-Regular.ttf)');
 
-        this.Loader
+        font.load().then(()=>{
+            this.Loader
             .add('PressStart2P-Regular', "sprite/PressStart2P-Regular.ttf")
             .add("player","sprite/player-v1.png")
             .add("rpgtileset","sprite/RPGpack_sheet.png")
@@ -87,6 +92,8 @@ export class ClientGame extends CommonGame {
             //console.log("Loaded all resources.. [ "+ this.loader. +" ]")
             this.initialize();
         }); 
+        })
+        
         
 
         

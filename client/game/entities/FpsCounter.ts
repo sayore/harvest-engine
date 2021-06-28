@@ -26,7 +26,7 @@ export class FPSCounterEntity extends ClientEntity implements IDrawable {
         if(this.Game.FpsMedian.length==0) return;
         this.fpsCounter.text = (this.Game.FpsMedian.reduce((a,y)=>(a+y))/this.Game.FpsMedian.length).toPrecision(4) + "("+this.Game.FpsMedian.length+")\n"+this.Game.Entities.length;
         this.fpsCounter.x = 10;
-        this.fpsCounter.y = 10;
+        this.fpsCounter.y = 120;
 
         this.MyGraphics.setTransform(this.Position.x, this.Position.y)
     }

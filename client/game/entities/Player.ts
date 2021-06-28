@@ -211,17 +211,18 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
     update() {
         this.PollingState++;
         let anypressed = false;
-        if (this.PressedKeys.has("Down")) { this.PhisicalVector.y += 11 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Up")) { this.PhisicalVector.y -= 11 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Left")) { this.PhisicalVector.x -= 14 * Math.random(); anypressed = true; }
-        if (this.PressedKeys.has("Right")) { this.PhisicalVector.x += 14 * Math.random(); anypressed = true; }
+        if (this.PressedKeys.has("Down")) { this.PhisicalVector.y += 12 ; anypressed = true; }
+        if (this.PressedKeys.has("Up")) { this.PhisicalVector.y -= 12   ; anypressed = true; }
+        if (this.PressedKeys.has("Left")) { this.PhisicalVector.x -= 14 ; anypressed = true; }
+        if (this.PressedKeys.has("Right")) { this.PhisicalVector.x += 14; anypressed = true; }
 
         if (!document.hasFocus()) {
             this.PressedKeys.clear();
             this.PhisicalVector.mulNumber(0.75);
         }
-        this.Position.add(Vector.mulNumber(this.PhisicalVector, 0.1));
-        this.PhisicalVector.mulNumber(0.93); //
+        if(this.PhisicalVector.length()>35)
+        this.Position.add(this.PhisicalVector.clone().normalize().mulNumber(6));
+        this.PhisicalVector.mulNumber(0.95); //
 
         if (!anypressed) {
             this.PhisicalVector.mulNumber(0.75);
@@ -245,7 +246,7 @@ export class Player extends ClientEntity implements IDrawable, ICollisionable {
         this.MyGraphics.setTransform(this.Position.x, this.Position.y)
 
         // Update Camera
-        return;
+        //return;
         if (this.LastCameraPositions.length > 20) this.LastCameraPositions.shift();
         this.LastCameraPositions.push(new Vector(
             -this.Position.x + this.Game.renderer.width / 2 - this.MySprite.width / 2,

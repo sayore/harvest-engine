@@ -1,6 +1,6 @@
 import { MathExt } from "../ext/MathExt";
 
-    export class Vector {
+export class Vector {
     negate(): Vector {
         this.x = -this.x;
         this.y = -this.y;
@@ -98,12 +98,17 @@ import { MathExt } from "../ext/MathExt";
      * Normalizes this vector.
      * @returns this
      */
-    normalize(): Vector {
-        if (this.x == 0 && this.y == 0) return this;
-        var distance = Math.sqrt(this.x * this.x + this.y * this.y);
-        this.modNumber(distance);
+    normalize() {
+        var len = this.length();
+        if (len > 0) {
+            this.scale(1 / len);
+        }
         return this;
-    }
+    };
+
+    length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    };
 
     /**
      * Returns the radian direction from this to target Vector..
@@ -139,6 +144,13 @@ import { MathExt } from "../ext/MathExt";
         return new Vector((this.x == 0 ? 0 : (this.x < 0 ? 1 : -1)), (this.y == 0 ? 0 : (this.y < 0 ? 1 : -1)));
     }
 
+    scale(f: number) {
+        this.x *= f;
+        this.y *= f;
+
+        return this;
+    };
+
     /**
      * Calculates the distance(1d) to the other Vector.
      * @param target Vector to look at.
@@ -158,9 +170,9 @@ import { MathExt } from "../ext/MathExt";
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
         return this;
-        };
-        
-    clamp(clamtorMin:Vector, clamptorMax: Vector) {
+    };
+
+    clamp(clamtorMin: Vector, clamptorMax: Vector) {
         this.x = MathExt.clamp(this.x, clamtorMin.x, clamptorMax.x);
         this.y = MathExt.clamp(this.y, clamtorMin.y, clamptorMax.y);
         return this;
@@ -211,22 +223,22 @@ import { MathExt } from "../ext/MathExt";
      * Everything larger will result in undefined behaviour.
      * @returns 
      */
-    serializeInto2char() : string {
-        return String.fromCharCode(this.x)+String.fromCharCode(this.y);
+    serializeInto2char(): string {
+        return String.fromCharCode(this.x) + String.fromCharCode(this.y);
     }
 
-    deserializeFrom2char(data:string) {
+    deserializeFrom2char(data: string) {
         this.x = data.charCodeAt(0);
         this.y = data.charCodeAt(1);
     }
 
-    static deserializeFrom2char(data:string) : Vector {
-        let retVec = new Vector(0,0);
+    static deserializeFrom2char(data: string): Vector {
+        let retVec = new Vector(0, 0);
         retVec.deserializeFrom2char(data);
         return retVec;
     }
 
     asString() {
-        return this.x+", "+this.y;
+        return this.x.toFixed(2) + ", " + this.y.toFixed(2);
     }
 }

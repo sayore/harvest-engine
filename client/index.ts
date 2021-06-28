@@ -1,6 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { Vector } from "../lib/types/Vector";
-import { ChunkHandler } from "./game/entities/ChunkHandler"; 
+import { ChunkHandler } from "./game/entities/ChunkHandler";
 import { ClientGame } from "./game/ClientGame";
 import { InputHandler } from "./game/InputHandler";
 import { FPSCounterEntity as FPSCounter } from "./game/entities/FpsCounter";
@@ -8,28 +7,27 @@ import { Mouse } from "./game/entities/Mouse";
 import { Inventory } from "./game/entities/Inventory";
 import { BigInventory } from "./game/entities/BigInventory";
 import { Player } from "./game/entities/Player";
-import { ABlock } from "./game/entities/ABlock";
+import { Chat } from "./game/entities/Chat";
 
 export let socket: Socket;
 export let game: ClientGame;
-let latestTos=0;
+let latestTos = 0;
 
 let agreed_tos = localStorage.getItem("tos_agreed");
-if(agreed_tos && 1622994700045 < Number(agreed_tos))
-{
+if (agreed_tos && 1622994700045 < Number(agreed_tos)) {
   console.log("Game Server.. ")
   //export let socket = io("https://sayore.de/",{
 
   let requestKey = <string>localStorage.getItem('uuid');
-  socket = io("https://"+window.location.hostname+"/",{
-      secure: true,
-      query: {
-        x: "42", 
-        requestedUUID: (requestKey!=null?requestKey:undefined)
-      }
-    });
-console.log("Requested UUID: "+localStorage.getItem('uuid'))
- 
+  socket = io("https://" + window.location.hostname + "/", {
+    secure: true,
+    query: {
+      x: "42",
+      requestedUUID: (requestKey != null ? requestKey : undefined)
+    }
+  });
+  console.log("Requested UUID: " + localStorage.getItem('uuid'))
+
   game = new ClientGame();
   //game.add(new Player()); 
 
@@ -37,9 +35,10 @@ console.log("Requested UUID: "+localStorage.getItem('uuid'))
   game.add(new InputHandler());
   game.add(new ChunkHandler());
   game.add(new Mouse());
+  game.add(new Chat());
   game.add(new Inventory());
   game.add(new BigInventory());
-  game.add(new Player()); 
+  game.add(new Player());
 
   /*for (let i = 0; i < 100; i++) {
     //const element = array[i];
@@ -48,14 +47,14 @@ console.log("Requested UUID: "+localStorage.getItem('uuid'))
     game.add(newBlock);
   }*/
 
-  game.start(socket); 
+  game.start(socket);
 
-  setInterval(()=>{
-      //console.log(socket.active)
-  },1000) 
+  setInterval(() => {
+    //console.log(socket.active)
+  }, 1000)
 
-}else {
-  document.body.innerHTML=`
+} else {
+  document.body.innerHTML = `
   <div id="tos_modal_container">
     <div id='tos_modal'>
 Die TOS/AGB noch nicht akzeptiert.
@@ -80,9 +79,9 @@ Die TOS/AGB wird zu einem späteren Punkt in der Entwicklung in einem Menü wied
     </div>
   </div>
   `
-  document.querySelector("#accept_tos").addEventListener("click",()=>{
-    document.querySelector("#tos_modal_container").innerHTML="<div style='font-size:48px;'>Reloading</div>"
-    localStorage.setItem("tos_agreed",Date.now().toString());
+  document.querySelector("#accept_tos").addEventListener("click", () => {
+    document.querySelector("#tos_modal_container").innerHTML = "<div style='font-size:48px;'>Reloading</div>"
+    localStorage.setItem("tos_agreed", Date.now().toString());
     window.location.href = window.location.href;
   });
 }

@@ -32,7 +32,7 @@ export class Mouse extends ClientEntity implements IDrawable {
             this.CursorStateGUI[i].tilePosition.x = -32*i;
             this.CursorStateGUI[i].tilePosition.y = -128+32;
             this.CursorStateGUI[i].interactive=true;
-            this.CursorStateGUI[i].setTransform(100 + 32 * i, 100);
+            this.CursorStateGUI[i].setTransform(0+ 32 * i, 0);
             this.CursorStateGUI[i].on("pointerover", (ev: any) => {
                 this.CursorStateGUI[i].tilePosition.y = -128-32;
                 if(this.mode==i) {this.CursorStateGUI[i].tilePosition.y = -128;}
@@ -59,7 +59,7 @@ export class Mouse extends ClientEntity implements IDrawable {
 
         this.tilePos = new Text("No Text", { fontFamily: 'PressStart2P-Regular', fontSize: 8, fill: 'black', padding:5 });
         this.tilePos.x = 10;
-        this.tilePos.y = 32;
+        this.tilePos.y = 32+110;
         this.tilePos.zIndex = -100;
         this.tilePos.resolution = 4;
         this.Game.gui.addChild(this.tilePos);
@@ -77,6 +77,8 @@ export class Mouse extends ClientEntity implements IDrawable {
             }
             this.MyGraphics.x = this.Position.x - this.Position.x % 64;
             this.MyGraphics.y = this.Position.y - this.Position.y % 64;
+
+            this.targetMovementVector =Vector.sub(this.Position, Vector.add(this.Player.Position, {x:32,y:32} as Vector)).normalize().mulNumber(6);
         });
 
 
@@ -98,11 +100,34 @@ export class Mouse extends ClientEntity implements IDrawable {
             }
             if (this.mode == MouseStates.Move) {
                 this.MoveState = "Moving";
+                this.targetMovementVector =Vector.sub(this.Position, Vector.add(this.Player.Position, {x:32,y:32} as Vector)).normalize().mulNumber(6);
                 console.log("Moving!")
             }
         });
 
-        
+        this.Game.stage.on("mouseupoutside", (ev: any) => {
+            console.log(
+                "Absolute tile:"
+                + this.absTilePosition()
+                + "\nChunk:"
+                + this.absChunk()
+                + "Chunk relative tile:"
+                + this.absTilePosition().mod(this.Game.CoreChunksize)
+            );
+
+            if (this.mode == MouseStates.Build) {
+
+            }
+            if (this.mode == MouseStates.Interact) {
+
+            }
+            if (this.mode == MouseStates.Move) {
+                this.MoveState = "None";
+                console.log("NOT Moving!")
+            }
+            // Reset stuff that should definetly NOT be on.
+            this.MoveState = "None";
+        });
 
         this.Game.stage.on("pointerup", (ev: any) => {
             console.log(
@@ -153,10 +178,11 @@ export class Mouse extends ClientEntity implements IDrawable {
     }
 
     private counter = 1;
+    private targetMovementVector: Vector;
     postUpdate() {
         this.counter++;
         if (this.counter % 10 && this.MoveState == "Moving" && this.mode == MouseStates.Move) {
-            this.Player.PhisicalVector.add( Vector.sub(this.Position, Vector.add(this.Player.Position, {x:32,y:32} as Vector)).normalize().divNumber(10) )
+            this.Player.Position.add(this.targetMovementVector)
         }
         this.tilePos.text = this.Position.asString()+"\n"+ this.absTilePosition().asString() + "\n" + this.absChunk().asString() + "\n" + this.relativeToChunkTilePos().asString();
     }
@@ -171,6 +197,6 @@ this.tilePos.text=""+Math.floor((this.Position.x-this.Position.x%64)/64)+ ", " +
 
 export enum MouseStates {
     Interact=0,
-    Build=1,
-    Move=2
+    Move=1,
+    Build=2
 }

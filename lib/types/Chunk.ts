@@ -25,8 +25,6 @@ export class Chunk implements IChunk{
         return JSON.stringify(chunk);
     };
     static deserialize(data:string): Chunk {
-
-
         return <Chunk>JSON.parse(data);;
     };
 }
